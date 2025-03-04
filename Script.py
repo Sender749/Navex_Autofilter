@@ -266,7 +266,7 @@ User - {}"""
 
     ADMIN_CMD_TXT = """<b><blockquote>
 -------------User Premium------------
-➩ <code>/add_premium</code> {user ID} {Times} - Add a premium user
+➩ /add_premium {user ID} {Times} - Add a premium user
 ➩ /remove_premium {user ID} - Remove a premium user
 ➩ /add_redeem - Generate a redeem code
 ➩ /premium_users - List all premium users
