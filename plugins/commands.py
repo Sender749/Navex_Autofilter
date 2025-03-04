@@ -200,12 +200,12 @@ async def start(client:Client, message):
                         await message.reply_photo(photo=random.choice(START_IMG), caption=script.START_TXT.format(message.from_user.mention, get_status(), message.from_user.id),
                             reply_markup=reply_markup,
                             parse_mode=enums.ParseMode.HTML)
-                try: 
-                    if newPoint == 0:
-                        await client.send_message(refUserId , script.REF_PREMEUM.format(PREMIUM_POINT))
-                    else: 
-                        await client.send_message(refUserId , script.REF_START.format(message.from_user.mention() , newPoint))
-                except : pass
+           #     try: 
+           #         if newPoint == 0:
+           #             await client.send_message(refUserId , script.REF_PREMEUM.format(PREMIUM_POINT))
+           #         else: 
+           #             await client.send_message(refUserId , script.REF_START.format(message.from_user.mention() , newPoint))
+           #     except : pass
         except Exception as e:
             traceback.print_exc()
             pass
