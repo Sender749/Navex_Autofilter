@@ -61,8 +61,8 @@ LANGUAGES = ["hindi", "english", "telugu", "tamil", "kannada", "malayalam", "ben
 QUALITIES = ["HdRip","web-dl" ,"bluray", "hdr", "fhd" , "240p", "360p", "480p", "540p", "720p", "960p", "1080p", "1440p", "2K", "2160p", "4k", "5K", "8K"]
 YEARS = [f'{i}' for i in range(2025, 2002,-1 )]
 SEASONS = [f'season {i}'for i in range (1 , 23)]
-REF_PREMIUM = 10
-PREMIUM_POINT = 30
+REF_PREMIUM = 30
+PREMIUM_POINT = 10
 #---------------------------------------------------------------
 AUTH_CHANNEL = int(auth_channel) if auth_channel and id_pattern.search(auth_channel) else None
 REQUEST_CHANNEL = int(request_channel) if request_channel and id_pattern.search(request_channel) else None
