@@ -1147,6 +1147,6 @@ async def reset_group_command(client, message):
 @Client.on_message(filters.command("reset_refer") & filters.user(ADMINS))
 async def reset_refer(bot, message):
     # Delete all referral-related data
-    await db.col.delete_many({})  # Delete all documents in the collection
+    await db.refer.delete_many({})  # Delete all documents in the collection
     await message.reply_text("✅ All referral data has been reset.")
     
