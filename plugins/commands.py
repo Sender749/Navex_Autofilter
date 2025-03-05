@@ -110,7 +110,7 @@ async def start(client:Client, message):
             return
         referdb.add_user(message.from_user.id)
         fromuse = referdb.get_refer_points(user_id) + 10
-        if fromuse == 100:
+        if fromuse >= PREMIUM_POINT:
             referdb.add_refer_points(user_id, 0) 
             await message.reply_text(f"𝙔𝙤𝙪 𝙝𝙖𝙫𝙚 𝙗𝙚𝙚𝙣 𝙨𝙪𝙘𝙘𝙚𝙨𝙨𝙛𝙪𝙡𝙡𝙮 𝙞𝙣𝙫𝙞𝙩𝙚𝙙 𝙗𝙮 {uss.mention}!") 
             await client.send_message(user_id, text=f"𝙔𝙤𝙪 𝙝𝙖𝙫𝙚 𝙗𝙚𝙚𝙣 𝙨𝙪𝙘𝙘𝙚𝙨𝙨𝙛𝙪𝙡𝙡𝙮 𝙞𝙣𝙫𝙞𝙩𝙚𝙙 𝙗𝙮 {message.from_user.mention}!") 
