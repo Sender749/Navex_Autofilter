@@ -64,7 +64,7 @@ class Database:
         await self.col.insert_one(user)
         
     async def update_point(self ,id):
-        await self.col.update_one({'id' : id} , {'$inc':{'point' : 100}})
+        await self.col.update_one({'id' : id} , {'$inc':{'point' : 30}})
         point = (await self.col.find_one({'id' : id}))['point']
         if point >= PREMIUM_POINT :
             seconds = (REF_PREMIUM * 24 * 60 * 60)
