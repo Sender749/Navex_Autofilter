@@ -20,6 +20,7 @@ from utils import formate_file_name,  get_settings, save_group_settings, is_req_
 import re
 import base64
 from info import *
+from info import ADMINS
 import traceback
 logger = logging.getLogger(__name__)
 movie_series_db = JsTopDB(DATABASE_URI)
@@ -1142,4 +1143,10 @@ async def reset_group_command(client, message):
     reply_markup = InlineKeyboardMarkup(btn)
     await save_default_settings(grp_id)
     await message.reply_text('ꜱᴜᴄᴄᴇꜱꜱғᴜʟʟʏ ʀᴇꜱᴇᴛ ɢʀᴏᴜᴘ ꜱᴇᴛᴛɪɴɢꜱ...')
+
+@Client.on_message(filters.command("reset_refer") & filters.user(ADMINS))
+async def reset_refer(bot, message):
+    # Delete all referral-related data
+    await db.col.delete_many({})  # Delete all documents in the collection
+    await message.reply_text("✅ All referral data has been reset.")
     
