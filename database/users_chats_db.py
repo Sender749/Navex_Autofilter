@@ -63,19 +63,32 @@ class Database:
         user = self.new_user(id, name)
         await self.col.insert_one(user)
         
-    async def update_point(self ,id):
-        await self.col.update_one({'id' : id} , {'$inc':{'point' : 30}})
-        point = (await self.col.find_one({'id' : id}))['point']
-        if point >= PREMIUM_POINT :
-            seconds = (REF_PREMIUM * 24 * 60 * 60)
-            oldEx =(await self.users.find_one({'id' : id}))
-            if oldEx :
-                expiry_time = oldEx['expiry_time'] + datetime.timedelta(seconds=seconds)
-            else: 
-                expiry_time = datetime.datetime.now() + datetime.timedelta(seconds=seconds)
-            user_data = {"id": id, "expiry_time": expiry_time}
-            await db.update_user(user_data)
-            await self.col.update_one({'id' : id} , {'$set':{'point' : 0}})
+    async def update_point(self, id, client):
+    await self.col.update_one({'id': id}, {'$inc': {'point': 30}})
+    point = (await self.col.find_one({'id': id}))['point']
+    print(f"User {id} now has {point} points.")  # Debug log
+
+    if point >= PREMIUM_POINT:
+        print(f"User {id} has reached the premium threshold.")  # Debug log
+        seconds = (REF_PREMIUM * 24 * 60 * 60)
+        oldEx = (await self.users.find_one({'id': id}))
+        if oldEx:
+            expiry_time = oldEx['expiry_time'] + datetime.timedelta(seconds=seconds)
+        else:
+            expiry_time = datetime.datetime.now() + datetime.timedelta(seconds=seconds)
+        user_data = {"id": id, "expiry_time": expiry_time}
+        await db.update_user(user_data)
+        await self.col.update_one({'id': id}, {'$set': {'point': 0}})
+
+        # Send a message to the user
+        try:
+            print(f"Sending premium notification to user {id}.")  # Debug log
+            await client.send_message(
+                chat_id=id,
+                text=f"🎉 Congratulations! You've been granted premium status for {REF_PREMIUM} days. Your subscription will expire on {expiry_time.strftime('%Y-%m-%d %H:%M:%S')}."
+            )
+        except Exception as e:
+            print(f"Failed to send message to user {id}: {e}")
             
     async def get_point(self , id):
         newPoint = await self.col.find_one({'id' : id})
