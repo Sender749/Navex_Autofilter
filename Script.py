@@ -111,7 +111,7 @@ User - {}"""
 📆 Year: {release_date}
 """
 
-    FILE_CAPTION = """<b><a href="https://t.me/Navex_Movies">💎💎</a>{file_name}\n\n𝖩𝗈𝗂𝗇➥ 「<a href="https://t.me/Navex_69">𝓝𝓐𝓥𝓔𝓧</a>」</b>"""
+    FILE_CAPTION = """<b><a href="https://t.me/Navex_Movies">💎💎</a>{file_name}\n\n𝖩𝗈𝗂𝗇➥ 「<a href="https://t.me/+j47Zv1sA9WViODk1">𝓝𝓐𝓥𝓔𝓧</a>」</b>"""
     
 
     ALRT_TXT = """ᴊᴀʟᴅɪ ʏᴇʜᴀ sᴇ ʜᴀᴛᴏ !"""
