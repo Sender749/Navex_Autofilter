@@ -2,6 +2,7 @@ import datetime
 import pytz
 from motor.motor_asyncio import AsyncIOMotorClient
 from info import SETTINGS, IS_PM_SEARCH, IS_SEND_MOVIE_UPDATE, PREMIUM_POINT,REF_PREMIUM,IS_VERIFY, SHORTENER_WEBSITE3, SHORTENER_API3, THREE_VERIFY_GAP, LINK_MODE, FILE_CAPTION, TUTORIAL, DATABASE_NAME, DATABASE_URI, IMDB, IMDB_TEMPLATE, PROTECT_CONTENT, AUTO_DELETE, SPELL_CHECK, AUTO_FILTER, LOG_VR_CHANNEL, SHORTENER_WEBSITE, SHORTENER_API, SHORTENER_WEBSITE2, SHORTENER_API2, TWO_VERIFY_GAP
+from info import REFERRAL_POINTS_PER_JOIN, PREMIUM_POINT, REF_PREMIUM
 # from utils import get_seconds
 client = AsyncIOMotorClient(DATABASE_URI)
 mydb = client[DATABASE_NAME]
@@ -63,16 +64,28 @@ class Database:
         user = self.new_user(id, name)
         await self.col.insert_one(user)
         
-    async def update_point(self, id, client):
-    # Increment points
-        await self.col.update_one({'id': id}, {'$inc': {'point': 30}})
-        point = (await self.col.find_one({'id': id}))['point']
+    async def update_point(self, id, points=REFERRAL_POINTS_PER_JOIN):  # Use REFERRAL_POINTS_PER_JOIN
+    """
+    Increment a user's referral points.
+    :param id: User ID
+    :param points: Points to add (default: REFERRAL_POINTS_PER_JOIN)
+    """
+    try:
+        # Increment points (create document if it doesn't exist)
+        await self.col.update_one(
+            {'id': id},
+            {'$inc': {'point': points}},
+            upsert=True
+        )
+        # Fetch updated points
+        user = await self.col.find_one({'id': id})
+        point = user.get('point', 0) if user else 0
         print(f"User {id} now has {point} points.")  # Debug log
 
         # Check for premium eligibility
-        if point >= PREMIUM_POINT:
+        if point >= PREMIUM_POINT:  # Use PREMIUM_POINT
             print(f"User {id} has reached the premium threshold.")  # Debug log
-            seconds = (REF_PREMIUM * 24 * 60 * 60)
+            seconds = (REF_PREMIUM * 24 * 60 * 60)  # Use REF_PREMIUM
             oldEx = (await self.users.find_one({'id': id}))
             if oldEx:
                 expiry_time = oldEx['expiry_time'] + datetime.timedelta(seconds=seconds)
@@ -91,6 +104,8 @@ class Database:
                 )
             except Exception as e:
                 print(f"Failed to send message to user {id}: {e}")
+    except Exception as e:
+        print(f"Error updating points for user {id}: {e}")
             
     async def get_point(self , id):
         newPoint = await self.col.find_one({'id' : id})
