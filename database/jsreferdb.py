@@ -35,5 +35,20 @@ class UserTracker:
         user = self.refer_collection.find_one({'user_id': user_id})
         return user.get('points') if user else 0
 
+    def reset_refer_data(self):
+        """
+        Reset all referral data by clearing both collections.
+        Returns the number of documents deleted from each collection.
+        """
+        # Clear the referusers collection
+        user_result = self.user_collection.delete_many({})
+        # Clear the refers collection
+        refer_result = self.refer_collection.delete_many({})
+
+        return {
+            "referusers_deleted": user_result.deleted_count,
+            "refers_deleted": refer_result.deleted_count
+        }
+
 
 referdb = UserTracker()
