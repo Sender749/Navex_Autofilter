@@ -176,8 +176,8 @@ async def start(client:Client, message):
         await client.send_message(LOG_CHANNEL, script.NEW_USER_TXT.format(temp.B_LINK, message.from_user.id, message.from_user.mention))
         try: 
             refData = message.command[1]
-            if refData and refData.split("-", 1)[0] == "Navex":
-                Fullref = refData.split("-", 1)
+            if refData and refData.split("_", 1)[0] == "Navex":
+                Fullref = refData.split("_", 1)
                 refUserId = int(Fullref[1])
                 print(f"Updating points for user {refUserId}.")  # Debug log
                 await db.update_point(refUserId)
