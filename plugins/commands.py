@@ -184,26 +184,27 @@ async def start(client:Client, message):
                 await db.update_point(refUserId)
                 newPoint = await db.get_point(refUserId)
                 print(f"User {refUserId} now has {newPoint} points.")  # Debug log
-             if AUTH_CHANNEL and await is_req_subscribed(client, message):
-                        buttons = [[
-                            InlineKeyboardButton('☆ Aᴅᴅ Mᴇ Tᴏ Yᴏᴜʀ Gʀᴏᴜᴘ ☆', url=f'http://t.me/{temp.U_NAME}?startgroup=start')
-                        ],[
-                            InlineKeyboardButton("Hᴇʟᴘ ⚙️", callback_data='features'),
-                            InlineKeyboardButton('Aʙᴏᴜᴛ 💌', callback_data=f'about')
-                        ],[
-                            InlineKeyboardButton('Pʀᴇᴍɪᴜᴍ 🎫', callback_data='seeplans'),
-                            InlineKeyboardButton('Rᴇғᴇʀ ⚜️', callback_data="reffff")
-                        ],[
-                            InlineKeyboardButton('Tᴏᴘ Tʀᴇɴᴅɪɴɢ ⚡', callback_data="trending"), 
-                            InlineKeyboardButton('Mᴏsᴛ Sᴇᴀʀᴄʜ 🔍', callback_data="mostsearch") 
-                        ]] 
-                        reply_markup = InlineKeyboardMarkup(buttons)
-                        m=await message.reply_sticker("CAACAgQAAxkBAAEN9q9nxyqs1yDrRQ_R2ZyoW1wVG4jw8wACRRcAAmArCVFO4FTIzy69ajYE") 
-                        await asyncio.sleep(1)
-                        await m.delete()
-                        await message.reply_photo(photo=random.choice(START_IMG), caption=script.START_TXT.format(message.from_user.mention, get_status(), message.from_user.id),
-                            reply_markup=reply_markup,
-                            parse_mode=enums.ParseMode.HTML)
+            if AUTH_CHANNEL and await is_req_subscribed(client, message):
+                buttons = [[
+                    InlineKeyboardButton('☆ Aᴅᴅ Mᴇ Tᴏ Yᴏᴜʀ Gʀᴏᴜᴘ ☆', url=f'http://t.me/{temp.U_NAME}?startgroup=start')
+                ],[
+                    InlineKeyboardButton("Hᴇʟᴘ ⚙️", callback_data='features'),
+                    InlineKeyboardButton('Aʙᴏᴜᴛ 💌', callback_data=f'about')
+                ],[
+                    InlineKeyboardButton('Pʀᴇᴍɪᴜᴍ 🎫', callback_data='seeplans'),
+                    InlineKeyboardButton('Rᴇғᴇʀ ⚜️', callback_data="reffff")
+                ],[
+                    InlineKeyboardButton('Tᴏᴘ Tʀᴇɴᴅɪɴɢ ⚡', callback_data="trending"), 
+                    InlineKeyboardButton('Mᴏsᴛ Sᴇᴀʀᴄʜ 🔍', callback_data="mostsearch") 
+                ]] 
+                reply_markup = InlineKeyboardMarkup(buttons)
+                m=await message.reply_sticker("CAACAgQAAxkBAAEN9q9nxyqs1yDrRQ_R2ZyoW1wVG4jw8wACRRcAAmArCVFO4FTIzy69ajYE") 
+                await asyncio.sleep(1)
+                await m.delete()
+                await message.reply_photo(photo=random.choice(START_IMG), caption=script.START_TXT.format(message.from_user.mention, get_status(), message.from_user.id),
+                    reply_markup=reply_markup,
+                    parse_mode=enums.ParseMode.HTML
+                )
            #     try: 
            #         if newPoint == 0:
            #             await client.send_message(refUserId , script.REF_PREMEUM.format(PREMIUM_POINT))
@@ -211,7 +212,8 @@ async def start(client:Client, message):
            #             await client.send_message(refUserId , script.REF_START.format(message.from_user.mention() , newPoint))
            #     except : pass
         except Exception as e:
-            traceback.print_exc()
+            print(f"Error processing referral data: {e}")  # Log the error
+            traceback.print_exc() # Print the full traceback for debugging
             pass
     if len(message.command) != 2:
         buttons = [[
