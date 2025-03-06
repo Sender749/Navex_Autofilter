@@ -1147,6 +1147,9 @@ async def reset_group_command(client, message):
 @Client.on_message(filters.command("reset_refer") & filters.user(ADMINS))
 async def reset_refer(bot, message):
     # Reset referral data
-    deleted_count = await referdb.reset_refer_data()
-    await message.reply_text(f"✅ All referral data has been reset. Deleted {deleted_count} documents.")
-    
+    result = referdb.reset_refer_data()
+    await message.reply_text(
+        f"✅ All referral data has been reset.\n\n"
+        f"Deleted {result['referusers_deleted']} users from referusers.\n"
+        f"Deleted {result['refers_deleted']} entries from refers."
+    )
