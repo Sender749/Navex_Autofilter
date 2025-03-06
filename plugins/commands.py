@@ -21,6 +21,7 @@ import re
 import base64
 from info import *
 from info import ADMINS
+from info import REFERRAL_POINTS_PER_JOIN, PREMIUM_POINT, REF_PREMIUM
 import traceback
 logger = logging.getLogger(__name__)
 movie_series_db = JsTopDB(DATABASE_URI)
@@ -1017,14 +1018,14 @@ async def refer(bot, message):
         InlineKeyboardButton(f'⏳ {referdb.get_refer_points(message.from_user.id)}', callback_data='ref_point'),
         InlineKeyboardButton('Close', callback_data='close_data')
     ]]  
-    m=await message.reply_sticker("CAACAgQAAxkBAAEN9q1nxyong4UZaPYBjx18grmb6ig2awACpRcAAqFyCVEIhIMkevWwdzYE")      
+    m = await message.reply_sticker("CAACAgQAAxkBAAEN9q1nxyong4UZaPYBjx18grmb6ig2awACpRcAAqFyCVEIhIMkevWwdzYE")      
     await m.delete()
     reply_markup = InlineKeyboardMarkup(btn)
     await message.reply_photo(
-            photo=random.choice(REFER_PICS),
-            caption=f'👋Hay {message.from_user.mention},\n\nHᴇʀᴇ ɪꜱ ʏᴏᴜʀ ʀᴇғғᴇʀᴀʟ ʟɪɴᴋ:\nhttps://t.me/{bot.me.username}?start=Navex_{message.from_user.id}\n\nShare this link with your friends, Each time they join,  you will get 10 refferal points and after 30 points you will get 7 day premium subscription.',
-            reply_markup=reply_markup,
-            parse_mode=enums.ParseMode.HTML
+        photo=random.choice(REFER_PICS),
+        caption=f'👋Hay {message.from_user.mention},\n\nHᴇʀᴇ ɪꜱ ʏᴏᴜʀ ʀᴇғғᴇʀᴀʟ ʟɪɴᴋ:\nhttps://t.me/{bot.me.username}?start=Navex_{message.from_user.id}\n\nShare this link with your friends, Each time they join,  you will get {REFERRAL_POINTS_PER_JOIN} refferal points and after {PREMIUM_POINT} points you will get {REF_PREMIUM} day premium subscription.',
+        reply_markup=reply_markup,
+        parse_mode=enums.ParseMode.HTML
     )
 
 @Client.on_message(filters.private & filters.command("pm_search_on"))
