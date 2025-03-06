@@ -1011,7 +1011,7 @@ async def top(client, query):
 @Client.on_message(filters.command("refer"))
 async def refer(bot, message):
     btn = [[
-        InlineKeyboardButton('invite link', url=f'https://telegram.me/share/url?url=https://t.me/{bot.me.username}?start=reff_{message.from_user.id}&text=Hello%21%20Experience%20a%20bot%20that%20offers%20a%20vast%20library%20of%20unlimited%20movies%20and%20series.%20%F0%9F%98%83'),
+        InlineKeyboardButton('invite link', url=f'https://telegram.me/share/url?url=https://t.me/{bot.me.username}?start=Navex_{message.from_user.id}&text=Hello%21%20Experience%20a%20bot%20that%20offers%20a%20vast%20library%20of%20unlimited%20movies%20and%20series.%20%F0%9F%98%83'),
         InlineKeyboardButton(f'⏳ {referdb.get_refer_points(message.from_user.id)}', callback_data='ref_point'),
         InlineKeyboardButton('Close', callback_data='close_data')
     ]]  
@@ -1020,7 +1020,7 @@ async def refer(bot, message):
     reply_markup = InlineKeyboardMarkup(btn)
     await message.reply_photo(
             photo=random.choice(REFER_PICS),
-            caption=f'👋Hay {message.from_user.mention},\n\nHᴇʀᴇ ɪꜱ ʏᴏᴜʀ ʀᴇғғᴇʀᴀʟ ʟɪɴᴋ:\nhttps://t.me/{bot.me.username}?start=reff_{message.from_user.id}\n\nShare this link with your friends, Each time they join,  you will get 10 refferal points and after 30 points you will get 7 day premium subscription.',
+            caption=f'👋Hay {message.from_user.mention},\n\nHᴇʀᴇ ɪꜱ ʏᴏᴜʀ ʀᴇғғᴇʀᴀʟ ʟɪɴᴋ:\nhttps://t.me/{bot.me.username}?start=Navex_{message.from_user.id}\n\nShare this link with your friends, Each time they join,  you will get 10 refferal points and after 30 points you will get 7 day premium subscription.',
             reply_markup=reply_markup,
             parse_mode=enums.ParseMode.HTML
     )
