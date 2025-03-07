@@ -91,10 +91,13 @@ async def start(client:Client, message):
         )
         return 
         # refer 
+    @Client.on_message(filters.command("start"))
+async def start(client: Client, message):
     if len(message.command) == 2 and message.command[1].startswith("Navex_"):
         try:
             referrer_id = int(message.command[1].split("_")[1])  # Extract referrer's ID
             referred_user_id = message.from_user.id  # ID of the user who clicked the referral link
+
             # Debug logs
             print(f"Referrer ID: {referrer_id}")
             print(f"Referred User ID: {referred_user_id}")
@@ -102,9 +105,9 @@ async def start(client:Client, message):
             print(f"Is referred user in referral DB: {referdb.is_user_in_list(referred_user_id)}")
 
             # Check if the referred user is already a bot user
-          #  if await db.is_user_exist(referred_user_id):
-          #      await message.reply_text("You are already a user of this bot. Referral points cannot be awarded.")
-          #      return
+            if await db.is_user_exist(referred_user_id):
+                await message.reply_text("You are already a user of this bot. Referral points cannot be awarded.")
+                return
 
             # Check if the referrer is trying to refer themselves
             if referrer_id == referred_user_id:
@@ -134,23 +137,30 @@ async def start(client:Client, message):
                 referdb.add_refer_points(referrer_id, 0)
 
                 # Notify referrer
-                await bot.send_message(
+                await client.send_message(
                     chat_id=referrer_id,
                     text=f"🎉 Congratulations! You've been granted premium status for {REF_PREMIUM} days. Your subscription will expire on {expiry_time.strftime('%Y-%m-%d %H:%M:%S')}."
                 )
+
+                # Notify admin in LOG_VR_CHANNEL
+                admin_message = f"🎉 User {message.from_user.mention} (ID: {referred_user_id}) joined using {referrer_id}'s referral link and granted them premium status!"
+                await client.send_message(LOG_VR_CHANNEL, admin_message)
             else:
                 # Update points without granting premium
                 referdb.add_refer_points(referrer_id, new_points)
 
             # Notify both users
             await message.reply_text(f"Thank you for joining! You were referred by user {referrer_id}.")
-            await bot.send_message(
+            await client.send_message(
                 chat_id=referrer_id,
                 text=f"🎉 User {message.from_user.mention} joined using your referral link! You now have {new_points} points."
             )
         except Exception as e:
             print(f"Error processing referral: {e}")
             await message.reply_text("An error occurred while processing your referral.")
+    else:
+        # Normal start command
+        await message.reply_text("Welcome! Use /refer to get your referral link.")
         
     if len(message.command) == 2 and message.command[1].startswith('getfile'):
         searches = message.command[1].split("-", 1)[1] 
