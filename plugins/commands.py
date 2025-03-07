@@ -93,36 +93,60 @@ async def start(client:Client, message):
         # refer 
     if len(message.command) == 2 and message.command[1].startswith("reff_"):
         try:
-            user_id = int(message.command[1].split("_")[1])
-        except ValueError:
-            await message.reply_text("Iɴᴠᴀʟɪᴅ ʀᴇғᴇʀ⁉️")
-            return
-        if user_id == message.from_user.id:
-            await message.reply_text("Hᴇʏ ᴅᴜᴅᴇ, ʏᴏᴜ ᴄᴀɴ ɴᴏᴛ ʀᴇғᴇʀ ʏᴏᴜʀsᴇʟғ⁉️")
-            return
-        if referdb.is_user_in_list(message.from_user.id):
-            await message.reply_text("‼️ Yᴏᴜ ʜᴀᴠᴇ ʙᴇᴇɴ ᴀʟʀᴇᴀᴅʏ ɪɴᴠɪᴛᴇᴅ ᴏʀ ᴊᴏɪɴᴇᴅ")
-            return
-        if await db.is_user_exist(message.from_user.id): 
-            await message.reply_text("‼️ Yᴏᴜ ʜᴀᴠᴇ ʙᴇᴇɴ ᴀʟʀᴇᴀᴅʏ ɪɴᴠɪᴛᴇᴅ ᴏʀ ᴊᴏɪɴᴇᴅ")
-            return            
-        try:
-            uss = await client.get_users(user_id)
-        except Exception:
-            return
-        referdb.add_user(message.from_user.id)
-        fromuse = referdb.get_refer_points(user_id) + 10
-        if fromuse >= PREMIUM_POINT:
-            referdb.add_refer_points(user_id, 0) 
-            await message.reply_text(f"𝙔𝙤𝙪 𝙝𝙖𝙫𝙚 𝙗𝙚𝙚𝙣 𝙨𝙪𝙘𝙘𝙚𝙨𝙨𝙛𝙪𝙡𝙡𝙮 𝙞𝙣𝙫𝙞𝙩𝙚𝙙 𝙗𝙮 {uss.mention}!") 
-            await client.send_message(user_id, text=f"𝙔𝙤𝙪 𝙝𝙖𝙫𝙚 𝙗𝙚𝙚𝙣 𝙨𝙪𝙘𝙘𝙚𝙨𝙨𝙛𝙪𝙡𝙡𝙮 𝙞𝙣𝙫𝙞𝙩𝙚𝙙 𝙗𝙮 {message.from_user.mention}!") 
-            await add_premium(client, user_id, uss)
-        else:
-            referdb.add_refer_points(user_id, fromuse)
-            await message.reply_text(f"𝙔𝙤𝙪 𝙝𝙖𝙫𝙚 𝙗𝙚𝙚𝙣 𝙨𝙪𝙘𝙘𝙚𝙨𝙨𝙛𝙪𝙡𝙡𝙮 𝙞𝙣𝙫𝙞𝙩𝙚𝙙 𝙗𝙮 {uss.mention}!")
-            await client.send_message(user_id, f"𝙔𝙤𝙪 𝙝𝙖𝙫𝙚 𝙨𝙪𝙘𝙘𝙚𝙨𝙨𝙛𝙪𝙡𝙡𝙮 𝙞𝙣𝙫𝙞𝙩𝙚𝙙 {message.from_user.mention}!")
-        return
+            referrer_id = int(message.command[1].split("_")[1])  # Extract referrer's ID
+            referred_user_id = message.from_user.id  # ID of the user who clicked the referral link
 
+            # Check if the referred user is already a bot user
+            if await db.is_user_exist(referred_user_id):
+                await message.reply_text("You are already a user of this bot. Referral points cannot be awarded.")
+                return
+
+            # Check if the referrer is trying to refer themselves
+            if referrer_id == referred_user_id:
+                await message.reply_text("You can't refer yourself!")
+                return
+
+            # Check if the referred user has already been invited
+            if referdb.is_user_in_list(referred_user_id):
+                await message.reply_text("You have already been invited or joined using a referral link.")
+                return
+
+            # Add the new user to the referral system
+            referdb.add_user(referred_user_id)
+
+            # Update referrer's points
+            current_points = referdb.get_refer_points(referrer_id)
+            new_points = current_points + REFERRAL_POINTS_PER_JOIN
+
+            if new_points >= PREMIUM_POINT:
+                # Grant premium to the referrer
+                seconds = REF_PREMIUM * 24 * 60 * 60
+                expiry_time = datetime.datetime.now() + datetime.timedelta(seconds=seconds)
+                user_data = {"id": referrer_id, "expiry_time": expiry_time}
+                await db.update_user(user_data)
+
+                # Reset points after granting premium
+                referdb.add_refer_points(referrer_id, 0)
+
+                # Notify referrer
+                await bot.send_message(
+                    chat_id=referrer_id,
+                    text=f"🎉 Congratulations! You've been granted premium status for {REF_PREMIUM} days. Your subscription will expire on {expiry_time.strftime('%Y-%m-%d %H:%M:%S')}."
+                )
+            else:
+                # Update points without granting premium
+                referdb.add_refer_points(referrer_id, new_points)
+
+            # Notify both users
+            await message.reply_text(f"Thank you for joining! You were referred by user {referrer_id}.")
+            await bot.send_message(
+                chat_id=referrer_id,
+                text=f"🎉 User {message.from_user.mention} joined using your referral link! You now have {new_points} points."
+            )
+        except Exception as e:
+            print(f"Error processing referral: {e}")
+            await message.reply_text("An error occurred while processing your referral.")
+        
     if len(message.command) == 2 and message.command[1].startswith('getfile'):
         searches = message.command[1].split("-", 1)[1] 
         search = searches.replace('-',' ')
