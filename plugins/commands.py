@@ -95,11 +95,16 @@ async def start(client:Client, message):
         try:
             referrer_id = int(message.command[1].split("_")[1])  # Extract referrer's ID
             referred_user_id = message.from_user.id  # ID of the user who clicked the referral link
+            # Debug logs
+            print(f"Referrer ID: {referrer_id}")
+            print(f"Referred User ID: {referred_user_id}")
+            print(f"Is referred user in main DB: {await db.is_user_exist(referred_user_id)}")
+            print(f"Is referred user in referral DB: {referdb.is_user_in_list(referred_user_id)}")
 
             # Check if the referred user is already a bot user
-            if await db.is_user_exist(referred_user_id):
-                await message.reply_text("You are already a user of this bot. Referral points cannot be awarded.")
-                return
+          #  if await db.is_user_exist(referred_user_id):
+          #      await message.reply_text("You are already a user of this bot. Referral points cannot be awarded.")
+          #      return
 
             # Check if the referrer is trying to refer themselves
             if referrer_id == referred_user_id:
