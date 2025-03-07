@@ -65,7 +65,7 @@ SEASONS = [f'season {i}'for i in range (1 , 23)]
 #---------------------------------------------------------------
 # Referral system settings
 REFERRAL_POINTS_PER_JOIN = 20  # Points awarded per referral
-PREMIUM_POINT = 50  # Points required to unlock premium
+PREMIUM_POINT = 20  # Points required to unlock premium
 REF_PREMIUM = 14  # Premium duration in days
 #---------------------------------------------------------------
 AUTH_CHANNEL = int(auth_channel) if auth_channel and id_pattern.search(auth_channel) else None
