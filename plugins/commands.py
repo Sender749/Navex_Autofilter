@@ -91,7 +91,7 @@ async def start(client:Client, message):
         )
         return 
         # refer 
-    if len(message.command) == 2 and message.command[1].startswith("Navex_"):
+    if len(message.command) == 2 and message.command[1].startswith("reff_"):
         try:
             referrer_id = int(message.command[1].split("_")[1])  # Extract referrer's ID
             referred_user_id = message.from_user.id  # ID of the user who clicked the referral link
