@@ -91,48 +91,37 @@ async def start(client:Client, message):
         )
         return 
         # refer 
-async def update_point(self, id, points=REFERRAL_POINTS_PER_JOIN):  # Use REFERRAL_POINTS_PER_JOIN
-    """
-    Increment a user's referral points.
-    :param id: User ID
-    :param points: Points to add (default: REFERRAL_POINTS_PER_JOIN)
-    """
-    try:
-        # Increment points (create document if it doesn't exist)
-        await self.col.update_one(
-            {'id': id},
-            {'$inc': {'point': points}},
-            upsert=True
-        )
-        # Fetch updated points
-        user = await self.col.find_one({'id': id})
-        point = user.get('point', 0) if user else 0
-        print(f"User {id} now has {point} points.")  # Debug log
-
-        # Check for premium eligibility
-        if point >= PREMIUM_POINT:  # Use PREMIUM_POINT
-            print(f"User {id} has reached the premium threshold.")  # Debug log
-            seconds = (REF_PREMIUM * 24 * 60 * 60)  # Use REF_PREMIUM
-            oldEx = (await self.users.find_one({'id': id}))
-            if oldEx:
-                expiry_time = oldEx['expiry_time'] + datetime.timedelta(seconds=seconds)
-            else:
-                expiry_time = datetime.datetime.now() + datetime.timedelta(seconds=seconds)
-            user_data = {"id": id, "expiry_time": expiry_time}
-            await db.update_user(user_data)
-            await self.col.update_one({'id': id}, {'$set': {'point': 0}})
-
-            # Send a message to the user
-            try:
-                print(f"Sending premium notification to user {id}.")  # Debug log
-                await client.send_message(
-                    chat_id=id,
-                    text=f"🎉 Congratulations! You've been granted premium status for {REF_PREMIUM} days. Your subscription will expire on {expiry_time.strftime('%Y-%m-%d %H:%M:%S')}."
-                )
-            except Exception as e:
-                print(f"Failed to send message to user {id}: {e}")
-    except Exception as e:
-        print(f"Error updating points for user {id}: {e}")    
+    if len(message.command) == 2 and message.command[1].startswith("reff_"):
+        try:
+            user_id = int(message.command[1].split("_")[1])
+        except ValueError:
+            await message.reply_text("Iɴᴠᴀʟɪᴅ ʀᴇғᴇʀ⁉️")
+            return
+        if user_id == message.from_user.id:
+            await message.reply_text("Hᴇʏ ᴅᴜᴅᴇ, ʏᴏᴜ ᴄᴀɴ ɴᴏᴛ ʀᴇғᴇʀ ʏᴏᴜʀsᴇʟғ⁉️")
+            return
+        if referdb.is_user_in_list(message.from_user.id):
+            await message.reply_text("‼️ Yᴏᴜ ʜᴀᴠᴇ ʙᴇᴇɴ ᴀʟʀᴇᴀᴅʏ ɪɴᴠɪᴛᴇᴅ ᴏʀ ᴊᴏɪɴᴇᴅ")
+            return
+        if await db.is_user_exist(message.from_user.id): 
+            await message.reply_text("‼️ Yᴏᴜ ʜᴀᴠᴇ ʙᴇᴇɴ ᴀʟʀᴇᴀᴅʏ ɪɴᴠɪᴛᴇᴅ ᴏʀ ᴊᴏɪɴᴇᴅ")
+            return            
+        try:
+            uss = await client.get_users(user_id)
+        except Exception:
+            return
+        referdb.add_user(message.from_user.id)
+        fromuse = referdb.get_refer_points(user_id) + 10
+        if fromuse >= 20:
+            referdb.add_refer_points(user_id, 0) 
+            await message.reply_text(f"𝙔𝙤𝙪 𝙝𝙖𝙫𝙚 𝙗𝙚𝙚𝙣 𝙨𝙪𝙘𝙘𝙚𝙨𝙨𝙛𝙪𝙡𝙡𝙮 𝙞𝙣𝙫𝙞𝙩𝙚𝙙 𝙗𝙮 {uss.mention}!") 
+            await client.send_message(user_id, text=f"𝙔𝙤𝙪 𝙝𝙖𝙫𝙚 𝙗𝙚𝙚𝙣 𝙨𝙪𝙘𝙘𝙚𝙨𝙨𝙛𝙪𝙡𝙡𝙮 𝙞𝙣𝙫𝙞𝙩𝙚𝙙 𝙗𝙮 {message.from_user.mention}!") 
+            await add_premium(client, user_id, uss)
+        else:
+            referdb.add_refer_points(user_id, fromuse)
+            await message.reply_text(f"𝙔𝙤𝙪 𝙝𝙖𝙫𝙚 𝙗𝙚𝙚𝙣 𝙨𝙪𝙘𝙘𝙚𝙨𝙨𝙛𝙪𝙡𝙡𝙮 𝙞𝙣𝙫𝙞𝙩𝙚𝙙 𝙗𝙮 {uss.mention}!")
+            await client.send_message(user_id, f"𝙔𝙤𝙪 𝙝𝙖𝙫𝙚 𝙨𝙪𝙘𝙘𝙚𝙨𝙨𝙛𝙪𝙡𝙡𝙮 𝙞𝙣𝙫𝙞𝙩𝙚𝙙 {message.from_user.mention}!")
+        return
         
     if len(message.command) == 2 and message.command[1].startswith('getfile'):
         searches = message.command[1].split("-", 1)[1] 
