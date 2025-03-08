@@ -91,7 +91,7 @@ async def start(client:Client, message):
         )
         return 
         # refer 
-    if len(message.command) == 2 and message.command[1].startswith("reff_"):
+    if len(message.command) == 2 and message.command[1].startswith("Navex_"):
         try:
             user_id = int(message.command[1].split("_")[1])
         except ValueError:
