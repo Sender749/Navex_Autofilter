@@ -73,7 +73,7 @@ async def send_movie_updates(bot, file_name, caption, file_id):
             return 
         processed_movies.add(movie_name)    
         poster_url = await get_imdb(movie_name)
-        caption_message = f"💎𝒩𝐸𝒲 𝐹𝐼𝐿𝐸 𝒜𝒟𝒟𝐸𝒟 \n\n📂 File Name:- <code>{movie_name}</code>\n\n🈵 Language:- {language}\n\n🎬 Quality:- {quality}" 
+        caption_message = f"💎𝑵𝑬𝑾 𝑭𝑰𝑳𝑬 𝑨𝑫𝑫𝑬𝑫 \n\n📂 File Name:- <code>{movie_name}</code>\n\n🈵 Language:- {language}\n\n🎬 Quality:- {quality}" 
         search_movie = movie_name.replace(" ", '-')
         movie_update_channel = await db.movies_update_channel_id()    
         btn = [[
