@@ -1,15 +1,39 @@
 from pyrogram import Client, filters
-from pyrogram.types import ChatMemberUpdated
-from Script import script  # Import script.py where WELCOME_TXT is stored
+from Script import script  
+from info import BIN_CHANNEL  # Import bin channel ID
 
-@Client.on_chat_member_updated(filters.group)
-async def welcome_user(client, chat_member: ChatMemberUpdated):
-    if chat_member.new_chat_member and chat_member.new_chat_member.status in ["member"]:
-        user_mention = chat_member.new_chat_member.user.mention  # Get user's mention
-        group_name = chat_member.chat.title  # Get group name
+@Client.on_message(filters.group & filters.new_chat_members)
+async def welcome(client, message):
+    for new_member in message.new_chat_members:
+        user_mention = new_member.mention  
+        user_id = new_member.id  
+        username = f"@{new_member.username}" if new_member.username else "No Username"
+        group_name = message.chat.title  
+        inviter = message.from_user  # Who added the user (if available)
 
-        # Get welcome message from script.py
+        # Determine how the user joined
+        if inviter:
+            if inviter.is_bot:
+                join_method = "Joined via Bot Message"
+            else:
+                join_method = f"Invited by {inviter.mention}"
+        elif message.sender_chat:
+            join_method = "Joined via Group Link"
+        else:
+            join_method = "Joined via Search"
+
+        # Welcome message in group
         welcome_text = script.WELCOME_TXT.format(user_mention=user_mention, group_name=group_name)
+        await message.reply_text(welcome_text)
 
-        # Send the welcome message
-        await client.send_message(chat_member.chat.id, welcome_text)
+        # Log message to bin channel
+        bin_message = (
+            f"🆕 **New User Joined!**\n\n"
+            f"👤 **Name:** {user_mention}\n"
+            f"🆔 **User ID:** `{user_id}`\n"
+            f"🔗 **Username:** {username}\n"
+            f"🏠 **Group:** {group_name}\n"
+            f"🛠 **Join Method:** {join_method}"
+        )
+
+        await client.send_message(BIN_CHANNEL, bin_message)
