@@ -205,12 +205,12 @@ async def start(client:Client, message):
                     reply_markup=reply_markup,
                     parse_mode=enums.ParseMode.HTML
                 )
-           #     try: 
-           #         if newPoint == 0:
-           #             await client.send_message(refUserId , script.REF_PREMEUM.format(PREMIUM_POINT))
-           #         else: 
-           #             await client.send_message(refUserId , script.REF_START.format(message.from_user.mention() , newPoint))
-           #     except : pass
+                try: 
+                    if newPoint == 0:
+                        await client.send_message(refUserId , script.REF_PREMEUM.format(PREMIUM_POINT))
+                    else: 
+                        await client.send_message(refUserId , script.REF_START.format(message.from_user.mention() , newPoint))
+                except : pass
         except Exception as e:
             print(f"Error processing referral data: {e}")  # Log the error
             traceback.print_exc() # Print the full traceback for debugging
