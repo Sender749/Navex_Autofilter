@@ -8,7 +8,7 @@ async def welcome_new_user(client, message):
         group_name = message.chat.title  # Get group name
 
         # Get welcome message from script.py
-        welcome_text = script.WELCOME_MESSAGE.format(user_mention=user_mention, group_name=group_name)
+        welcome_text = script.WELCOME_TXT.format(user_mention=user_mention, group_name=group_name)
 
         # Send the welcome message
         await message.reply_text(welcome_text)
