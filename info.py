@@ -1,6 +1,7 @@
 import re
 from os import environ,getenv
 from Script import script
+import os  # Ensure os module is imported
 
 id_pattern = re.compile(r'^.\d+$')
 def is_enabled(value, default):
@@ -39,6 +40,7 @@ SUPPORT_GROUP = int(environ.get('SUPPORT_GROUP', '-1002262450769'))
 request_channel = environ.get('REQUEST_CHANNEL', '-1002380553501') # If anyone sends a request message to your bot, you will get it in this channel.
 MOVIE_UPDATE_CHANNEL = int(environ.get('MOVIE_UPDATE_CHANNEL', '-1002279624678')) # 
 SUPPORT_CHAT = environ.get('SUPPORT_CHAT', 'https://t.me/Navexdisscussion') #Support group link ( make sure bot is admin )
+BIN_CHANNEL = int(os.environ.get("BIN_CHANNEL", "-1002452746830"))  # Replace with your bin channel ID
 #---------------------------------------------------------------
 #---------------------------------------------------------------
 IS_VERIFY = is_enabled('IS_VERIFY', True)
