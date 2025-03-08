@@ -64,44 +64,19 @@ class Database:
         user = self.new_user(id, name)
         await self.col.insert_one(user)
         
-    async def update_point(self, id, points=REFERRAL_POINTS_PER_JOIN):
-        try:
-            # Increment points
-            await self.col.update_one(
-                {'id': id},
-                {'$inc': {'point': points}},
-                upsert=True
-            )
-
-            # Fetch updated points
-            user = await self.col.find_one({'id': id})
-            point = user.get('point', 0) if user else 0
-            print(f"User {id} now has {point} points.")
-
-            # Check for premium eligibility
-            if point >= PREMIUM_POINT:
-                print(f"User {id} has reached the premium threshold.")
-                seconds = REF_PREMIUM * 24 * 60 * 60
-                oldEx = await self.users.find_one({'id': id})
-                if oldEx:
-                    expiry_time = oldEx['expiry_time'] + datetime.timedelta(seconds=seconds)
-                else:
-                    expiry_time = datetime.datetime.now() + datetime.timedelta(seconds=seconds)
-
-                # Update user's premium status
-                user_data = {"id": id, "expiry_time": expiry_time}
-                await db.update_user(user_data)
-
-                # Reset points
-                await self.col.update_one({'id': id}, {'$set': {'point': 0}})
-
-                # Notify user
-                await bot.send_message(
-                    chat_id=id,
-                    text=f"🎉 Congratulations! You've been granted premium status for {REF_PREMIUM} days. Your subscription will expire on {expiry_time.strftime('%Y-%m-%d %H:%M:%S')}."
-                )
-        except Exception as e:
-            print(f"Error updating points for user {id}: {e}")
+    async def update_point(self ,id):
+        await self.col.update_one({'id' : id} , {'$inc':{'point' : 100}})
+        point = (await self.col.find_one({'id' : id}))['point']
+        if point >= PREMIUM_POINT :
+            seconds = (REF_PREMIUM * 24 * 60 * 60)
+            oldEx =(await self.users.find_one({'id' : id}))
+            if oldEx :
+                expiry_time = oldEx['expiry_time'] + datetime.timedelta(seconds=seconds)
+            else: 
+                expiry_time = datetime.datetime.now() + datetime.timedelta(seconds=seconds)
+            user_data = {"id": id, "expiry_time": expiry_time}
+            await db.update_user(user_data)
+            await self.col.update_one({'id' : id} , {'$set':{'point' : 0}})
             
     async def get_point(self , id):
         newPoint = await self.col.find_one({'id' : id})
