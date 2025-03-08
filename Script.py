@@ -8,7 +8,7 @@ class script(object):
 
 ɴᴏᴛᴇ - ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ ᴡᴏʀᴋ ɪɴ ʙᴏᴛʜ ɢʀᴏᴜᴘs ᴀɴᴅ ʙᴏᴛ ᴘᴍ</b>"""
     
-    WELCOME_TXT = """<b>👋 Welcome {user_mention} to {group_name}! 🎉\nEnjoy your stay and follow the group rules.</b>"""
+    WELCOME_MESSAGE = """<b>👋 Welcome {user_mention} to {group_name}! 🎉\nEnjoy your stay and follow the group rules.</b>"""
 
     WELCOME_VIDEO_PATH = "path/to/your/welcome_video.mp4"
     
