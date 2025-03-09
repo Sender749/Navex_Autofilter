@@ -1,3 +1,14 @@
+from Jisshu.bot import JisshuBot  # Import the bot instance
+from pyrogram import filters
+from pyrogram.types import ChatMemberUpdated
+from info import BIN_CHANNEL
+
+TUTORIAL_VIDEO_FILE_ID = "BAACAgUAAxkBAAIN3GfMYg3f98IOATHjOljUWUSK8D_MAAJ1FQACyBhRVjH6nRmO9C86HgQ"
+
+SEND_WELCOME_MESSAGE = True
+SEND_TUTORIAL_VIDEO = True
+SEND_JOIN_LOG = True
+
 print("Welcome plugin loaded!")  # Debug log
 
 @JisshuBot.on_chat_member_updated()
