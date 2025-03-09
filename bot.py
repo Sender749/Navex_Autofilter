@@ -55,8 +55,9 @@ async def Jisshu_start():
 
     await initialize_clients()
 
-    # Manually import welcome.py to make sure it's loaded
-    import plugins.welcome  # Ensure welcome event handlers are registered
+    # Manually import welcome.py to ensure it's loaded
+    import plugins.welcome
+    print("Welcome plugin explicitly imported!")  # Debug log
 
     # Dynamically load all plugins
     for name in files:
