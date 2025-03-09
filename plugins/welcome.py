@@ -1,5 +1,5 @@
 from pyrogram import filters
-from info import BIN_CHANNEL_ID  # Import bin channel ID
+from info import BIN_CHANNEL  # Import bin channel ID
 from Jisshu.bot import JisshuBot  # Import bot instance
 
 # Tutorial video file_id
@@ -34,4 +34,4 @@ async def welcome_new_user(client, message):
 
         # Send join log to bin channel if enabled
         if SEND_JOIN_LOG:
-            await client.send_message(BIN_CHANNEL_ID, f"📝 **User joined:** {user_name}")
+            await client.send_message(BIN_CHANNEL, f"📝 **User joined:** {user_name}")
