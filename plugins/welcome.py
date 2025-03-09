@@ -1,5 +1,5 @@
 from pyrogram import Client, filters
-from script import WELCOME_MESSAGE  # Assuming you have a WELCOME_MESSAGE in script.py
+from Script import WELCOME_MESSAGE  # Assuming you have a WELCOME_MESSAGE in script.py
 
 # Tutorial video file_id
 TUTORIAL_VIDEO_FILE_ID = "BAACAgUAAxkBAAIN3GfMYg3f98IOATHjOljUWUSK8D_MAAJ1FQACyBhRVjH6nRmO9C86HgQ"
