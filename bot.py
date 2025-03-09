@@ -48,18 +48,10 @@ pyrogram.utils.MIN_CHANNEL_ID = -1009147483647
 
 async def Jisshu_start():
     print('\n')
-    print('Initializing Jisshu Filter Bot')
-
+    print('Initalizing Jisshu Filter Bot')
     bot_info = await JisshuBot.get_me()
     JisshuBot.username = bot_info.username
-
     await initialize_clients()
-
-    # Manually import welcome.py to ensure it's loaded
-    import plugins.welcome
-    print("Welcome plugin explicitly imported!")  # Debug log
-
-    # Dynamically load all plugins
     for name in files:
         with open(name) as a:
             patt = Path(a.name)
@@ -71,7 +63,6 @@ async def Jisshu_start():
             spec.loader.exec_module(load)
             sys.modules["plugins." + plugin_name] = load
             print("Jisshu Filter Bot Imported => " + plugin_name)
-
     if ON_HEROKU:
         asyncio.create_task(ping_server())
     b_users, b_chats = await db.get_banned()
