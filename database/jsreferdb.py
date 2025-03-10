@@ -44,7 +44,7 @@ class UserTracker:
         return bool(self.premium_collection.find_one({'user_id': user_id}))
 
     def grant_premium_if_eligible(self, user_id, points):
-        REQUIRED_POINTS = 10  # Set required points for premium
+        REQUIRED_POINTS = 20  # Set required points for premium
 
         if points >= REQUIRED_POINTS and not self.is_premium(user_id):
             self.premium_collection.insert_one({'user_id': user_id, 'premium': True})
