@@ -69,7 +69,7 @@ class Database:
         point = (await self.col.find_one({'id' : id}))['point']
         if point >= PREMIUM_POINT :
             seconds = (REF_PREMIUM * 24 * 60 * 60)
-            oldEx =(await self.users.find_one({'id' : id}))
+            oldEx = await self.col.find_one({'id' : id})
             if oldEx :
                 expiry_time = oldEx['expiry_time'] + datetime.timedelta(seconds=seconds)
             else: 
