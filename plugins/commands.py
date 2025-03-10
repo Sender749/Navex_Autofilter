@@ -1041,7 +1041,7 @@ async def handle_refer(client, message):
     # Check if eligible for premium
     await refdb.grant_premium_if_eligible(client, user_id, refdb.get_refer_points(user_id))
 
-    await message.reply("You earned 1 referral point! Keep referring for premium access! 🎉")
+    await message.reply("You earned 10 referral point! Keep referring for premium access! 🎉")
 
 @Client.on_message(filters.private & filters.command("pm_search_on"))
 async def set_pm_search_on(client, message):
