@@ -262,7 +262,7 @@ class Database:
         
         
     async def update_user(self, user_data):
-        await self.users.update_one({"id": user_data["id"]}, {"$set": user_data}, upsert=True)
+        await self.col.update_one({"id": user_data["id"]}, {"$set": user_data}, upsert=True)
 
 
     async def get_expired(self, current_time):
