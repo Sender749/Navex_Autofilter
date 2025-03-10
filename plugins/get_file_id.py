@@ -1,50 +1,34 @@
 from pyrogram import Client, filters
 
-app = Client("my_bot")
+# Assuming JisshuBot is the main bot client
+from Jisshu.bot import JisshuBot
 
-# Dictionary to store user states
-user_states = {}
+@JisshuBot.on_message(filters.command("file_id") & filters.reply)
+async def get_replied_file_id(client, message):
+    replied_message = message.reply_to_message
 
-@app.on_message(filters.command("file_id"))
-async def request_file(client, message):
-    # Set the user's state to expect a file
-    user_states[message.from_user.id] = "awaiting_file"
-    await message.reply_text("Send me a file.")
+    if not replied_message or not replied_message.media:
+        await message.reply_text("❌ Please reply to a media file to get its file_id.")
+        return
 
-@app.on_message(filters.media & filters.private)
-async def get_media_file_id(client, message):
-    user_id = message.from_user.id
+    # Identify the media type and extract file_id
+    file_id = None
+    media_type = "Unknown"
 
-    # Check if the user is in the "awaiting_file" state
-    if user_id in user_states and user_states[user_id] == "awaiting_file":
-        # Reset the user's state
-        user_states[user_id] = None
+    if replied_message.video:
+        file_id = replied_message.video.file_id
+        media_type = "Video"
+    elif replied_message.document:
+        file_id = replied_message.document.file_id
+        media_type = "File"
+    elif replied_message.animation:
+        file_id = replied_message.animation.file_id
+        media_type = "GIF"
+    elif replied_message.sticker:
+        file_id = replied_message.sticker.file_id
+        media_type = "Sticker"
 
-        # Check the type of media and extract the file ID accordingly
-        file_id = None
-
-        if message.video:
-            file_id = message.video.file_id
-            media_type = "Video"
-        elif message.document:
-            file_id = message.document.file_id
-            media_type = "File"
-        elif message.animation:
-            file_id = message.animation.file_id
-            media_type = "GIF"
-        elif message.sticker:
-            file_id = message.sticker.file_id
-            media_type = "Sticker"
-        else:
-            media_type = "Unknown"
-
-        if file_id:
-            # Send the file ID back to the user
-            await message.reply_text(f"🎬 **{media_type} File ID:**\n`{file_id}`")
-        else:
-            await message.reply_text("This media type doesn't have a file ID.")
+    if file_id:
+        await message.reply_text(f"🎬 **{media_type} File ID:**\n`{file_id}`")
     else:
-        # If the user is not in the "awaiting_file" state, ignore the media
-        pass
-
-app.run()
+        await message.reply_text("❌ This media type doesn't have a valid file_id.")
