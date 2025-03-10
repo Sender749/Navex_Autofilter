@@ -1013,22 +1013,35 @@ async def top(client, query):
     )
     await query.message.reply("<b>Here Is The Top Trending List 👇</b>", reply_markup=spika)
     
-@Client.on_message(filters.command("refer"))
-async def refer(bot, message):
-    btn = [[
-        InlineKeyboardButton('invite link', url=f'https://telegram.me/share/url?url=https://t.me/{bot.me.username}?start=reff_{message.from_user.id}&text=Hello%21%20Experience%20a%20bot%20that%20offers%20a%20vast%20library%20of%20unlimited%20movies%20and%20series.%20%F0%9F%98%83'),
-        InlineKeyboardButton(f'⏳ {referdb.get_refer_points(message.from_user.id)}', callback_data='ref_point'),
-        InlineKeyboardButton('Close', callback_data='close_data')
-    ]]  
-    m=await message.reply_sticker("CAACAgQAAxkBAAEkt_Rl_7138tgHJdEsqSNzO5mPWioZDgACGRAAAudLcFGAbsHU3KNJUx4E")      
-    await m.delete()
-    reply_markup = InlineKeyboardMarkup(btn)
-    await message.reply_photo(
-            photo=random.choice(REFER_PICS),
-            caption=f'👋Hay {message.from_user.mention},\n\nHᴇʀᴇ ɪꜱ ʏᴏᴜʀ ʀᴇғғᴇʀᴀʟ ʟɪɴᴋ:\nhttps://t.me/{bot.me.username}?start=reff_{message.from_user.id}\n\nShare this link with your friends, Each time they join,  you will get 10 refferal points and after 100 points you will get 1 month premium subscription.',
-            reply_markup=reply_markup,
-            parse_mode=enums.ParseMode.HTML
-    )
+#@Client.on_message(filters.command("refer"))
+#async def refer(bot, message):
+#    btn = [[
+#        InlineKeyboardButton('invite link', url=f'https://telegram.me/share/url?url=https://t.me/{bot.me.username}?start=reff_{message.from_user.id}&text=Hello%21%20Experience%20a%20bot%20that%20offers%20a%20vast%20library%20of%20unlimited%20movies%20and%20series.%20%F0%9F%98%83'),
+#        InlineKeyboardButton(f'⏳ {referdb.get_refer_points(message.from_user.id)}', callback_data='ref_point'),
+#        InlineKeyboardButton('Close', callback_data='close_data')
+#    ]]  
+#    m=await message.reply_sticker("CAACAgQAAxkBAAEkt_Rl_7138tgHJdEsqSNzO5mPWioZDgACGRAAAudLcFGAbsHU3KNJUx4E")      
+#    await m.delete()
+#    reply_markup = InlineKeyboardMarkup(btn)
+#    await message.reply_photo(
+#            photo=random.choice(REFER_PICS),
+#            caption=f'👋Hay {message.from_user.mention},\n\nHᴇʀᴇ ɪꜱ ʏᴏᴜʀ ʀᴇғғᴇʀᴀʟ ʟɪɴᴋ:\nhttps://t.me/{bot.me.username}?start=reff_{message.from_user.id}\n\nShare this link with your friends, Each time they join,  you will get 10 refferal points and after 100 points you will get 1 month premium subscription.',
+#            reply_markup=reply_markup,
+#            parse_mode=enums.ParseMode.HTML
+#    )
+
+@Client.on_message(filters.command("refer") & filters.private)
+async def handle_refer(client, message):
+    refdb = ReferDB()
+    user_id = message.from_user.id
+
+    # Add points (for example, +1 point per referral)
+    refdb.add_refer_points(user_id, 1)
+
+    # Check if eligible for premium
+    await refdb.grant_premium_if_eligible(client, user_id, refdb.get_refer_points(user_id))
+
+    await message.reply("You earned 1 referral point! Keep referring for premium access! 🎉")
 
 @Client.on_message(filters.private & filters.command("pm_search_on"))
 async def set_pm_search_on(client, message):
