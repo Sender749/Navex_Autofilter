@@ -52,6 +52,23 @@ class UserTracker:
             return True
         return False
 
+async def grant_premium_if_eligible(self, client, user_id, points):
+    REQUIRED_POINTS = 10  # Set required points for premium
+
+    if points >= REQUIRED_POINTS and not self.is_premium(user_id):
+        self.premium_collection.insert_one({'user_id': user_id, 'premium': True})
+        print(f"✅ User {user_id} granted premium access!")
+
+        # ✅ Send notification to the user
+        try:
+            await client.send_message(chat_id=user_id, text="🎉 Congrats! You've been granted premium access!")
+        except Exception as e:
+            print(f"Error sending premium notification: {e}")
+
+        return True
+    return False
+
+
     def reset_refer_data(self):
         """
         Reset all referral data by clearing both collections.
