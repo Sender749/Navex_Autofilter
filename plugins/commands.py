@@ -1036,7 +1036,7 @@ async def handle_refer(client, message):
     user_id = message.from_user.id
 
     # Add points (for example, +1 point per referral)
-    refdb.add_refer_points(user_id, 1)
+    refdb.add_refer_points(user_id, 10)
 
     # Check if eligible for premium
     await refdb.grant_premium_if_eligible(client, user_id, refdb.get_refer_points(user_id))
