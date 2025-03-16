@@ -2,7 +2,6 @@ import datetime
 import pytz
 from motor.motor_asyncio import AsyncIOMotorClient
 from info import SETTINGS, IS_PM_SEARCH, IS_SEND_MOVIE_UPDATE, PREMIUM_POINT,REF_PREMIUM,IS_VERIFY, SHORTENER_WEBSITE3, SHORTENER_API3, THREE_VERIFY_GAP, LINK_MODE, FILE_CAPTION, TUTORIAL, DATABASE_NAME, DATABASE_URI, IMDB, IMDB_TEMPLATE, PROTECT_CONTENT, AUTO_DELETE, SPELL_CHECK, AUTO_FILTER, LOG_VR_CHANNEL, SHORTENER_WEBSITE, SHORTENER_API, SHORTENER_WEBSITE2, SHORTENER_API2, TWO_VERIFY_GAP
-from info import REFERRAL_POINTS_PER_JOIN, PREMIUM_POINT, REF_PREMIUM
 # from utils import get_seconds
 client = AsyncIOMotorClient(DATABASE_URI)
 mydb = client[DATABASE_NAME]
@@ -69,7 +68,7 @@ class Database:
         point = (await self.col.find_one({'id' : id}))['point']
         if point >= PREMIUM_POINT :
             seconds = (REF_PREMIUM * 24 * 60 * 60)
-            oldEx = await self.col.find_one({'id' : id})
+            oldEx =(await self.users.find_one({'id' : id}))
             if oldEx :
                 expiry_time = oldEx['expiry_time'] + datetime.timedelta(seconds=seconds)
             else: 
@@ -262,7 +261,7 @@ class Database:
         
         
     async def update_user(self, user_data):
-        await self.col.update_one({"id": user_data["id"]}, {"$set": user_data}, upsert=True)
+        await self.users.update_one({"id": user_data["id"]}, {"$set": user_data}, upsert=True)
 
 
     async def get_expired(self, current_time):
@@ -425,4 +424,3 @@ class Database:
         await self.grp.update_one({'id': int(id)}, {'$set': {'settings': self.default}})
 
 db = Database()
-
