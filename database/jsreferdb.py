@@ -13,7 +13,6 @@ class UserTracker:
     def __init__(self):
         self.user_collection = mydb["referusers"]
         self.refer_collection = mydb["refers"]
-        self.premium_collection = mydb["premium_users"]
 
     def add_user(self, user_id):
         if not self.is_user_in_list(user_id):
@@ -26,48 +25,15 @@ class UserTracker:
         return bool(self.user_collection.find_one({'user_id': user_id}))
 
     def add_refer_points(self, user_id: int, points: int):
-        current_points = self.get_refer_points(user_id) + points
         self.refer_collection.update_one(
             {'user_id': user_id},
-            {'$set': {'points': current_points}},
+            {'$set': {'points': points}},
             upsert=True
         )
-        
-        # ✅ Check if user qualifies for premium
-        self.grant_premium_if_eligible(user_id, current_points)
 
     def get_refer_points(self, user_id: int):
         user = self.refer_collection.find_one({'user_id': user_id})
-        return user.get('points', 0) if user else 0
-
-    def is_premium(self, user_id):
-        return bool(self.premium_collection.find_one({'user_id': user_id}))
-
-    def grant_premium_if_eligible(self, user_id, points):
-        REQUIRED_POINTS = 20  # Set required points for premium
-
-        if points >= REQUIRED_POINTS and not self.is_premium(user_id):
-            self.premium_collection.insert_one({'user_id': user_id, 'premium': True})
-            print(f"✅ User {user_id} granted premium access!")
-            return True
-        return False
-
-async def grant_premium_if_eligible(self, client, user_id, points):
-    REQUIRED_POINTS = 10  # Set required points for premium
-
-    if points >= REQUIRED_POINTS and not self.is_premium(user_id):
-        self.premium_collection.insert_one({'user_id': user_id, 'premium': True})
-        print(f"✅ User {user_id} granted premium access!")
-
-        # ✅ Send notification to the user
-        try:
-            await client.send_message(chat_id=user_id, text="🎉 Congrats! You've been granted premium access!")
-        except Exception as e:
-            print(f"Error sending premium notification: {e}")
-
-        return True
-    return False
-
+        return user.get('points') if user else 0
 
     def reset_refer_data(self):
         """
