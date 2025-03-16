@@ -176,14 +176,14 @@ async def start(client:Client, message):
         await db.add_user(message.from_user.id, message.from_user.first_name)
         await client.send_message(LOG_CHANNEL, script.NEW_USER_TXT.format(temp.B_LINK, message.from_user.id, message.from_user.mention))
         try: 
-            refData = message.command[1]
-            if refData and refData.split("_", 1)[0] == "Navex":
-                Fullref = refData.split("_", 1)
-                refUserId = int(Fullref[1])
-                print(f"Updating points for user {refUserId}.")  # Debug log
-                await db.update_point(refUserId)
-                newPoint = await db.get_point(refUserId)
-                print(f"User {refUserId} now has {newPoint} points.")  # Debug log
+           # refData = message.command[1]
+           # if refData and refData.split("_", 1)[0] == "Navex":
+           #     Fullref = refData.split("_", 1)
+           #     refUserId = int(Fullref[1])
+           #     print(f"Updating points for user {refUserId}.")  # Debug log
+           #     await db.update_point(refUserId)
+           #     newPoint = await db.get_point(refUserId)
+           #     print(f"User {refUserId} now has {newPoint} points.")  # Debug log
             if AUTH_CHANNEL and await is_req_subscribed(client, message):
                 buttons = [[
                     InlineKeyboardButton('☆ Aᴅᴅ Mᴇ Tᴏ Yᴏᴜʀ Gʀᴏᴜᴘ ☆', url=f'http://t.me/{temp.U_NAME}?startgroup=start')
@@ -205,14 +205,14 @@ async def start(client:Client, message):
                     reply_markup=reply_markup,
                     parse_mode=enums.ParseMode.HTML
                 )
-                try: 
-                    if newPoint == 0:
-                        await client.send_message(refUserId , script.REF_PREMEUM.format(PREMIUM_POINT))
-                    else: 
-                        await client.send_message(refUserId , script.REF_START.format(message.from_user.mention() , newPoint))
-                except : pass
+              #  try: 
+              #      if newPoint == 0:
+              #          await client.send_message(refUserId , script.REF_PREMEUM.format(PREMIUM_POINT))
+              #      else: 
+              #          await client.send_message(refUserId , script.REF_START.format(message.from_user.mention() , newPoint))
+              #  except : pass
         except Exception as e:
-            print(f"Error processing referral data: {e}")  # Log the error
+           # print(f"Error processing referral data: {e}")  # Log the error
             traceback.print_exc() # Print the full traceback for debugging
             pass
     if len(message.command) != 2:
@@ -229,7 +229,7 @@ async def start(client:Client, message):
                             InlineKeyboardButton('Mᴏsᴛ Sᴇᴀʀᴄʜ 🔍', callback_data="mostsearch") 
                         ]] 
         reply_markup = InlineKeyboardMarkup(buttons)
-        m=await message.reply_sticker("CAACAgQAAxkBAAEN9q9nxyqs1yDrRQ_R2ZyoW1wVG4jw8wACRRcAAmArCVFO4FTIzy69ajYE") 
+        m=await message.reply_sticker("CAACAgQAAxkBAAIRYWfWghtJZJyte4mUE75OzCZ6lAvNAALwFAACVqWIU-McVNiL0UmJHgQ") 
         await asyncio.sleep(1)
         await m.delete()
         await message.reply_photo(photo=random.choice(START_IMG), caption=script.START_TXT.format(message.from_user.mention, get_status(), message.from_user.id),
@@ -568,7 +568,7 @@ async def send_request(bot, message):
     try:
         request = message.text.split(" ", 1)[1]
     except:
-        await message.reply_text("<b>‼️ ʏᴏᴜʀ ʀᴇǫᴜᴇsᴛ ɪs ɪɴᴄᴏᴍᴘʟᴇᴛᴇ</b>")
+        await message.reply_text("<b>‼️ ʏᴏᴜʀ ʀᴇǫᴜᴇsᴛ ɪs ɪɴᴄᴏᴍᴘʟᴇᴛᴇ\n\nᴜsᴇ ᴛʜɪs ғᴏʀᴍᴀᴛ 👇\n\nᴇxᴀᴍᴘʟᴇ : /request ironman 2013</b>")
         return
     buttons = [[
         InlineKeyboardButton('👀 ᴠɪᴇᴡ ʀᴇǫᴜᴇꜱᴛ 👀', url=f"{message.link}")
@@ -818,7 +818,7 @@ async def set_shortner_3(c, m):
     try:
         URL = m.command[1]
         API = m.command[2]
-        resp = requests.get(f'https://{URL}/api?api={API}&url=https://telegram.dog/Jisshu_support').json()
+        resp = requests.get(f'https://{URL}/api?api={API}&url=https://t.me/Navex_69').json()
         if resp['status'] == 'success':
             SHORT_LINK = resp['shortenedUrl']
         await save_group_settings(grp_id, 'shortner_three', URL)
@@ -1013,35 +1013,22 @@ async def top(client, query):
     )
     await query.message.reply("<b>Here Is The Top Trending List 👇</b>", reply_markup=spika)
     
-#@Client.on_message(filters.command("refer"))
-#async def refer(bot, message):
-#    btn = [[
-#        InlineKeyboardButton('invite link', url=f'https://telegram.me/share/url?url=https://t.me/{bot.me.username}?start=reff_{message.from_user.id}&text=Hello%21%20Experience%20a%20bot%20that%20offers%20a%20vast%20library%20of%20unlimited%20movies%20and%20series.%20%F0%9F%98%83'),
-#        InlineKeyboardButton(f'⏳ {referdb.get_refer_points(message.from_user.id)}', callback_data='ref_point'),
-#        InlineKeyboardButton('Close', callback_data='close_data')
-#    ]]  
-#    m=await message.reply_sticker("CAACAgQAAxkBAAEkt_Rl_7138tgHJdEsqSNzO5mPWioZDgACGRAAAudLcFGAbsHU3KNJUx4E")      
-#    await m.delete()
-#    reply_markup = InlineKeyboardMarkup(btn)
-#    await message.reply_photo(
-#            photo=random.choice(REFER_PICS),
-#            caption=f'👋Hay {message.from_user.mention},\n\nHᴇʀᴇ ɪꜱ ʏᴏᴜʀ ʀᴇғғᴇʀᴀʟ ʟɪɴᴋ:\nhttps://t.me/{bot.me.username}?start=reff_{message.from_user.id}\n\nShare this link with your friends, Each time they join,  you will get 10 refferal points and after 100 points you will get 1 month premium subscription.',
-#            reply_markup=reply_markup,
-#            parse_mode=enums.ParseMode.HTML
-#    )
-
-@Client.on_message(filters.command("refer") & filters.private)
-async def handle_refer(client, message):
-    refdb = ReferDB()
-    user_id = message.from_user.id
-
-    # Add points (for example, +1 point per referral)
-    refdb.add_refer_points(user_id, 10)
-
-    # Check if eligible for premium
-    await refdb.grant_premium_if_eligible(client, user_id, refdb.get_refer_points(user_id))
-
-    await message.reply("You earned 10 referral point! Keep referring for premium access! 🎉")
+@Client.on_message(filters.command("refer"))
+async def refer(bot, message):
+    btn = [[
+        InlineKeyboardButton('invite link', url=f'https://telegram.me/share/url?url=https://t.me/{bot.me.username}?start=reff_{message.from_user.id}&text=Hello%21%20Experience%20a%20bot%20that%20offers%20a%20vast%20library%20of%20unlimited%20movies%20and%20series.%20%F0%9F%98%83'),
+        InlineKeyboardButton(f'⏳ {referdb.get_refer_points(message.from_user.id)}', callback_data='ref_point'),
+        InlineKeyboardButton('Close', callback_data='close_data')
+    ]]  
+    m=await message.reply_sticker("CAACAgQAAxkBAAEkt_Rl_7138tgHJdEsqSNzO5mPWioZDgACGRAAAudLcFGAbsHU3KNJUx4E")      
+    await m.delete()
+    reply_markup = InlineKeyboardMarkup(btn)
+    await message.reply_photo(
+            photo=random.choice(REFER_PICS),
+            caption=f'👋Hay {message.from_user.mention},\n\nHᴇʀᴇ ɪꜱ ʏᴏᴜʀ ʀᴇғғᴇʀᴀʟ ʟɪɴᴋ:\nhttps://t.me/{bot.me.username}?start=reff_{message.from_user.id}\n\nShare this link with your friends, Each time they join,  you will get 10 refferal points and after 100 points you will get 1 month premium subscription.',
+            reply_markup=reply_markup,
+            parse_mode=enums.ParseMode.HTML
+    )
 
 @Client.on_message(filters.private & filters.command("pm_search_on"))
 async def set_pm_search_on(client, message):
