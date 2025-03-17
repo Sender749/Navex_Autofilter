@@ -45,18 +45,18 @@ BIN_CHANNEL = int(os.environ.get("BIN_CHANNEL", "-1002452746830"))  # Replace wi
 #---------------------------------------------------------------
 IS_VERIFY = is_enabled('IS_VERIFY', True)
 #---------------------------------------------------------------
-TUTORIAL = environ.get("TUTORIAL", "https://t.me/Navexdisscussion/33")
-TUTORIAL_2 = environ.get("TUTORIAL_2", "https://t.me/Navexdisscussion/4")
+TUTORIAL = environ.get("TUTORIAL", "https://t.me/Navexdisscussion/4")
+TUTORIAL_2 = environ.get("TUTORIAL_2", "https://t.me/Navexdisscussion/33")
 TUTORIAL_3 = environ.get("TUTORIAL_3", "https://t.me/Navexdisscussion/4")
 VERIFY_IMG = environ.get("VERIFY_IMG", "https://graph.org/file/1669ab9af68eaa62c3ca4.jpg")
-SHORTENER_API = environ.get("SHORTENER_API", "940ee20f1d6714b3072420e707f3503341550ec0")
-SHORTENER_WEBSITE = environ.get("SHORTENER_WEBSITE", 'techvjlink.site')
-SHORTENER_API2 = environ.get("SHORTENER_API2", "fb4812435a09dcca63276a47da3c8ac5c23239ef")
-SHORTENER_WEBSITE2 = environ.get("SHORTENER_WEBSITE2", 'instantlinks.co')
+SHORTENER_API = environ.get("SHORTENER_API", "fb4812435a09dcca63276a47da3c8ac5c23239ef")
+SHORTENER_WEBSITE = environ.get("SHORTENER_WEBSITE", 'instantlinks.co')
+SHORTENER_API2 = environ.get("SHORTENER_API2", "940ee20f1d6714b3072420e707f3503341550ec0")
+SHORTENER_WEBSITE2 = environ.get("SHORTENER_WEBSITE2", 'techvjlink.site')
 SHORTENER_API3 = environ.get("SHORTENER_API3", "fb4812435a09dcca63276a47da3c8ac5c23239ef")
 SHORTENER_WEBSITE3 = environ.get("SHORTENER_WEBSITE3", 'instantlinks.co')
-TWO_VERIFY_GAP = int(environ.get('TWO_VERIFY_GAP', "43200"))
-THREE_VERIFY_GAP = int(environ.get('THREE_VERIFY_GAP', "43200"))
+TWO_VERIFY_GAP = int(environ.get('TWO_VERIFY_GAP', "360"))
+THREE_VERIFY_GAP = int(environ.get('THREE_VERIFY_GAP', "360"))
 #---------------------------------------------------------------
 #---------------------------------------------------------------
 LANGUAGES = ["hindi", "english", "telugu", "tamil", "kannada", "malayalam", "bengali", "marathi", "gujarati", "punjabi", "marathi"]
