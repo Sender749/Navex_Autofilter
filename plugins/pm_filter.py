@@ -182,16 +182,22 @@ async def next_page(bot, query):
             display_text = file.caption if file.caption else file.file_name
             links += f"""<b>\n\n{file_num}. <a href=https://t.me/{temp.U_NAME}?start=file_{query.message.chat.id}_{file.file_id}>[{get_size(file.file_size)}] {' '.join(filter(lambda x: not x.startswith('[') and not x.startswith('@') and not x.startswith('www.'), display_text.split()))}</a></b>"""
     else:
-        display_text = file.caption if file.caption else file.file_name
-        InlineKeyboardButton(text=f"🔗 {get_size(file.file_size)}≽ {formate_file_name(display_text)}", callback_data=f'cfiles#{reqnxt}#{file.file_id}')
-                for file in files
-              ]
-    btn.insert(0,[
-	InlineKeyboardButton("📥 𝗦𝗲𝗻𝗱 𝗔𝗹𝗹 𝗙𝗶𝗹𝗲𝘀 📥", callback_data=batch_link),
-        ])
+        btn = [
+            [
+                InlineKeyboardButton(
+                    text=f"🔗 {get_size(file.file_size)}≽ {formate_file_name(file.caption if file.caption else file.file_name)}",
+                    callback_data=f'cfiles#{reqnxt}#{file.file_id}'
+                )
+            ]
+            for file in files
+        ]
+
+    btn.insert(0, [
+        InlineKeyboardButton("📥 𝗦𝗲𝗻𝗱 𝗔𝗹𝗹 𝗙𝗶𝗹𝗲𝘀 📥", callback_data=batch_link),
+    ])
     btn.insert(1, [
         InlineKeyboardButton("ǫᴜᴀʟɪᴛʏ ", callback_data=f"qualities#{key}#{offset}#{req}"),
-	InlineKeyboardButton("ꜱᴇᴀꜱᴏɴ", callback_data=f"seasons#{key}#{offset}#{req}"),
+        InlineKeyboardButton("ꜱᴇᴀꜱᴏɴ", callback_data=f"seasons#{key}#{offset}#{req}"),
         InlineKeyboardButton("ʟᴀɴɢᴜᴀɢᴇ ", callback_data=f"languages#{key}#{offset}#{req}")
     ])    
 
@@ -315,10 +321,15 @@ async def season_search(client: Client, query: CallbackQuery):
             display_text = file.caption if file.caption else file.file_name
             links += f"""<b>\n\n{file_num}. <a href=https://t.me/{temp.U_NAME}?start=file_{query.message.chat.id}_{file.file_id}>[{get_size(file.file_size)}] {' '.join(filter(lambda x: not x.startswith('[') and not x.startswith('@') and not x.startswith('www.'), display_text.split()))}</a></b>"""
     else:
-        display_text = file.caption if file.caption else file.file_name
-        InlineKeyboardButton(text=f"🔗 {get_size(file.file_size)}≽ {formate_file_name(display_text)}", callback_data=f'cfiles#{reqnxt}#{file.file_id}')
-                   for file in files
-              ]
+        btn = [
+            [
+                InlineKeyboardButton(
+                    text=f"🔗 {get_size(file.file_size)}≽ {formate_file_name(file.caption if file.caption else file.file_name)}",
+                    callback_data=f'cfiles#{reqnxt}#{file.file_id}'
+                )
+            ]
+            for file in files
+        ]
    
     btn.insert(0,[
 	InlineKeyboardButton("📥 𝗦𝗲𝗻𝗱 𝗔𝗹𝗹 𝗙𝗶𝗹𝗲𝘀 📥", callback_data=batch_link),
@@ -422,10 +433,15 @@ async def year_search(client: Client, query: CallbackQuery):
             display_text = file.caption if file.caption else file.file_name
             links += f"""<b>\n\n{file_num}. <a href=https://t.me/{temp.U_NAME}?start=file_{query.message.chat.id}_{file.file_id}>[{get_size(file.file_size)}] {' '.join(filter(lambda x: not x.startswith('[') and not x.startswith('@') and not x.startswith('www.'), display_text.split()))}</a></b>"""
     else:
-        display_text = file.caption if file.caption else file.file_name
-        InlineKeyboardButton(text=f"🔗 {get_size(file.file_size)}≽ {formate_file_name(display_text)}", callback_data=f'cfiles#{reqnxt}#{file.file_id}')
-                   for file in files
-              ]
+        btn = [
+            [
+                InlineKeyboardButton(
+                    text=f"🔗 {get_size(file.file_size)}≽ {formate_file_name(file.caption if file.caption else file.file_name)}",
+                    callback_data=f'cfiles#{reqnxt}#{file.file_id}'
+                )
+            ]
+            for file in files
+        ]
         
    
     btn.insert(0,[
@@ -529,10 +545,15 @@ async def quality_search(client: Client, query: CallbackQuery):
             display_text = file.caption if file.caption else file.file_name
             links += f"""<b>\n\n{file_num}. <a href=https://t.me/{temp.U_NAME}?start=file_{query.message.chat.id}_{file.file_id}>[{get_size(file.file_size)}] {' '.join(filter(lambda x: not x.startswith('[') and not x.startswith('@') and not x.startswith('www.'), display_text.split()))}</a></b>"""
     else:
-        display_text = file.caption if file.caption else file.file_name
-        InlineKeyboardButton(text=f"🔗 {get_size(file.file_size)}≽ {formate_file_name(display_text)}", callback_data=f'cfiles#{reqnxt}#{file.file_id}')
-                   for file in files
-              ]
+        btn = [
+            [
+                InlineKeyboardButton(
+                    text=f"🔗 {get_size(file.file_size)}≽ {formate_file_name(file.caption if file.caption else file.file_name)}",
+                    callback_data=f'cfiles#{reqnxt}#{file.file_id}'
+                )
+            ]
+            for file in files
+        ]
         
  
     btn.insert(0,[
@@ -641,10 +662,15 @@ async def lang_search(client: Client, query: CallbackQuery):
             display_text = file.caption if file.caption else file.file_name
             links += f"""<b>\n\n{file_num}. <a href=https://t.me/{temp.U_NAME}?start=file_{query.message.chat.id}_{file.file_id}>[{get_size(file.file_size)}] {' '.join(filter(lambda x: not x.startswith('[') and not x.startswith('@') and not x.startswith('www.'), display_text.split()))}</a></b>"""
     else:
-        display_text = file.caption if file.caption else file.file_name
-        InlineKeyboardButton(text=f"🔗 {get_size(file.file_size)}≽ {formate_file_name(display_text)}", callback_data=f'cfiles#{reqnxt}#{file.file_id}')
-                   for file in files
-              ]
+        btn = [
+            [
+                InlineKeyboardButton(
+                    text=f"🔗 {get_size(file.file_size)}≽ {formate_file_name(file.caption if file.caption else file.file_name)}",
+                    callback_data=f'cfiles#{reqnxt}#{file.file_id}'
+                )
+            ]
+            for file in files
+        ]
         
 
     btn.insert(0,[
