@@ -36,6 +36,8 @@ async def save_file(media):
     # TODO: Find better way to get same file_id for same media to avoid duplicates
     file_id, file_ref = unpack_new_file_id(media.file_id)
     file_name = re.sub(r"(_|\-|\.|\+)", " ", str(media.file_name))
+    caption = media.caption.html if media.caption else None  # Save caption if available
+
     try:
         file = Media(
             file_id=file_id,
@@ -43,7 +45,7 @@ async def save_file(media):
             file_name=file_name,
             file_size=media.file_size,
             mime_type=media.mime_type,
-            caption=media.caption.html if media.caption else None,
+            caption=caption,  # Save caption here
             file_type=media.mime_type.split('/')[0]
         )
     except ValidationError:
@@ -66,22 +68,33 @@ async def get_search_results(query, max_results=MAX_BTN, offset=0, lang=None):
     elif ' ' not in query:
         raw_pattern = r'(\b|[\.\+\-_])' + query + r'(\b|[\.\+\-_])'
     else:
-        raw_pattern = query.replace(' ', r'.*[\s\.\+\-_]') 
+        raw_pattern = query.replace(' ', r'.*[\s\.\+\-_]')
+    
     try:
         regex = re.compile(raw_pattern, flags=re.IGNORECASE)
     except:
         regex = query
-    filter = {'file_name': regex}
+
+    # Search in both file_name and caption
+    filter = {
+        '$or': [
+            {'file_name': regex},
+            {'caption': regex}
+        ]
+    }
+
     cursor = Media.find(filter)
     cursor.sort('$natural', -1)
+
     if lang:
-        lang_files = [file async for file in cursor if lang in file.file_name.lower()]
+        lang_files = [file async for file in cursor if lang in (file.file_name or '').lower() or lang in (file.caption or '').lower()]
         files = lang_files[offset:][:max_results]
         total_results = len(lang_files)
         next_offset = offset + max_results
         if next_offset >= total_results:
             next_offset = ''
         return files, next_offset, total_results
+
     cursor.skip(offset).limit(max_results)
     files = await cursor.to_list(length=max_results)
     total_results = await Media.count_documents(filter)
@@ -98,13 +111,23 @@ async def get_bad_files(query, file_type=None, offset=0, filter=False):
         raw_pattern = r'(\b|[\.\+\-_])' + query + r'(\b|[\.\+\-_])'
     else:
         raw_pattern = query.replace(' ', r'.*[\s\.\+\-_]')
+    
     try:
         regex = re.compile(raw_pattern, flags=re.IGNORECASE)
     except:
         return []
-    filter = {'file_name': regex}
+
+    # Search in both file_name and caption
+    filter = {
+        '$or': [
+            {'file_name': regex},
+            {'caption': regex}
+        ]
+    }
+
     if file_type:
         filter['file_type'] = file_type
+
     total_results = await Media.count_documents(filter)
     cursor = Media.find(filter)
     cursor.sort('$natural', -1)
@@ -112,7 +135,13 @@ async def get_bad_files(query, file_type=None, offset=0, filter=False):
     return files, total_results
     
 async def get_file_details(query):
-    filter = {'file_id': query}
+    filter = {
+        '$or': [
+            {'file_id': query},
+            {'file_name': query},
+            {'caption': query}
+        ]
+    }
     cursor = Media.find(filter)
     filedetails = await cursor.to_list(length=1)
     return filedetails
