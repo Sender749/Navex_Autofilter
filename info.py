@@ -55,8 +55,8 @@ SHORTENER_API2 = environ.get("SHORTENER_API2", "940ee20f1d6714b3072420e707f35033
 SHORTENER_WEBSITE2 = environ.get("SHORTENER_WEBSITE2", 'techvjlink.site')
 SHORTENER_API3 = environ.get("SHORTENER_API3", "fb4812435a09dcca63276a47da3c8ac5c23239ef")
 SHORTENER_WEBSITE3 = environ.get("SHORTENER_WEBSITE3", 'instantlinks.co')
-TWO_VERIFY_GAP = int(environ.get('TWO_VERIFY_GAP', "360"))
-THREE_VERIFY_GAP = int(environ.get('THREE_VERIFY_GAP', "360"))
+TWO_VERIFY_GAP = int(environ.get('TWO_VERIFY_GAP', "21600")) #in seconds
+THREE_VERIFY_GAP = int(environ.get('THREE_VERIFY_GAP', "21600")) #in seconds
 #---------------------------------------------------------------
 #---------------------------------------------------------------
 LANGUAGES = ["hindi", "english", "telugu", "tamil", "kannada", "malayalam", "bengali", "marathi", "gujarati", "punjabi", "marathi"]
@@ -84,14 +84,14 @@ REACTIONS = ["👀", "😱", "🔥", "😍", "🎉", "🥰", "😇", "⚡"]
 #---------------------------------------------------------------
 #---------------------------------------------------------------
 #---------------------------------------------------------------
-FILE_AUTO_DEL_TIMER = int(environ.get('FILE_AUTO_DEL_TIMER', '43200'))
+FILE_AUTO_DEL_TIMER = int(environ.get('FILE_AUTO_DEL_TIMER', '43200')) #in seconds
 AUTO_FILTER = is_enabled('AUTO_FILTER', True)
 IS_PM_SEARCH = is_enabled('IS_PM_SEARCH', False)
 IS_SEND_MOVIE_UPDATE = is_enabled('IS_SEND_MOVIE_UPDATE', False) # Don't Change It ( If You Want To Turn It On Then Turn It On By Commands) We Suggest You To Make It Turn Off If You Are Indexing Files First Time.
 PORT = environ.get('PORT', '5000')
 MAX_BTN = int(environ.get('MAX_BTN', '8'))
 AUTO_DELETE = is_enabled('AUTO_DELETE', True)
-DELETE_TIME = int(environ.get('DELETE_TIME', 300))
+DELETE_TIME = int(environ.get('DELETE_TIME', 300)) #in seconds
 IMDB = is_enabled('IMDB', True)
 FILE_CAPTION = environ.get('FILE_CAPTION', f'{script.FILE_CAPTION}')
 IMDB_TEMPLATE = environ.get('IMDB_TEMPLATE', f'{script.IMDB_TEMPLATE_TXT}')
