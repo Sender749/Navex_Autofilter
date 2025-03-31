@@ -9,6 +9,10 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from marshmallow.exceptions import ValidationError
 from info import DATABASE_URI, DATABASE_NAME, COLLECTION_NAME, MAX_BTN
 
+# Initialize logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 client = AsyncIOMotorClient(DATABASE_URI)
 mydb = client[DATABASE_NAME]
 instance = Instance.from_db(mydb)
@@ -29,50 +33,67 @@ class Media(Document):
 
 async def get_files_db_size():
     return (await mydb.command("dbstats"))['dataSize']
+
+def extract_search_terms(query):
+    """Extract potential search terms from user query"""
+    query = query.strip().lower()
     
-async def save_file(media):
-    """Save file in database"""
+    # Remove common filler words/phrases (customize this list as needed)
+    filler_words = {
+        'bhai', 'bhje do', 'send', 'please', 'hai', 'hai kya', 'kya', 
+        'do', 'de do', 'chahiye', 'dijiye', 'dedo', 'south',
+        'gurnal', 'bhular', 'movie', 'series', 'anime', 'link',
+        'download', 'de', 'dear', 'bro', 'hi', 'hello', 'pls', 'plz'
+    }
+    
+    # Remove special characters and split into words
+    words = re.sub(r'[^\w\s]', '', query).split()
+    
+    # Filter out filler words and very short words
+    search_terms = [word for word in words if word not in filler_words and len(word) > 2]
+    
+    # Also consider multi-word combinations
+    all_terms = search_terms.copy()
+    for i in range(len(search_terms)):
+        for j in range(i+2, min(i+4, len(search_terms)+1)):  # Try 2-3 word combinations
+            term = ' '.join(search_terms[i:j])
+            if len(term) > 5:  # Only consider meaningful multi-word terms
+                all_terms.append(term)
+    
+    # Log extracted terms for debugging
+    logger.info(f"Extracted search terms from '{query}': {all_terms}")
+    
+    return list(set(all_terms))  # Remove duplicates
 
-    # TODO: Find better way to get same file_id for same media to avoid duplicates
-    file_id, file_ref = unpack_new_file_id(media.file_id)
-    file_name = re.sub(r"(_|\-|\.|\+)", " ", str(media.file_name))
-    caption = media.caption.html if media.caption else None  # Save caption if available
-
-    try:
-        file = Media(
-            file_id=file_id,
-            file_ref=file_ref,
-            file_name=file_name,
-            file_size=media.file_size,
-            mime_type=media.mime_type,
-            caption=caption,  # Save caption here
-            file_type=media.mime_type.split('/')[0]
-        )
-    except ValidationError:
-        print('Error occurred while saving file in database')
-        return 'err'
-    else:
-        try:
-            await file.commit()
-        except DuplicateKeyError:      
-            print(f'{getattr(media, "file_name", "NO_FILE")} is already saved in database') 
-            return 'dup'
+def build_regex_pattern(terms):
+    """Build regex pattern from search terms"""
+    if not terms:
+        return '.'
+    
+    patterns = []
+    for term in terms:
+        if ' ' not in term:
+            # Single word pattern with word boundaries
+            patterns.append(r'(\b|[\.\+\-_])' + re.escape(term) + r'(\b|[\.\+\-_])')
         else:
-            print(f'{getattr(media, "file_name", "NO_FILE")} is saved to database')
-            return 'suc'
+            # Multi-word pattern with flexible spacing
+            patterns.append(re.escape(term).replace(' ', r'[\s\.\+\-_]+'))
+    
+    return '|'.join(patterns)
 
 async def get_search_results(query, max_results=MAX_BTN, offset=0, lang=None):
+    """Improved search that handles queries with extra text"""
     query = query.strip()
     if not query:
         raw_pattern = '.'
-    elif ' ' not in query:
-        raw_pattern = r'(\b|[\.\+\-_])' + query + r'(\b|[\.\+\-_])'
     else:
-        raw_pattern = query.replace(' ', r'.*[\s\.\+\-_]')
+        search_terms = extract_search_terms(query)
+        raw_pattern = build_regex_pattern(search_terms)
     
     try:
         regex = re.compile(raw_pattern, flags=re.IGNORECASE)
-    except:
+    except re.error as e:
+        logger.error(f"Regex error for pattern '{raw_pattern}': {e}")
         regex = query
 
     # Search in both file_name and caption
@@ -102,22 +123,49 @@ async def get_search_results(query, max_results=MAX_BTN, offset=0, lang=None):
     if next_offset >= total_results:
         next_offset = ''       
     return files, next_offset, total_results
-    
+
+async def save_file(media):
+    """Save file in database"""
+    file_id, file_ref = unpack_new_file_id(media.file_id)
+    file_name = re.sub(r"(_|\-|\.|\+)", " ", str(media.file_name))
+    caption = media.caption.html if media.caption else None
+
+    try:
+        file = Media(
+            file_id=file_id,
+            file_ref=file_ref,
+            file_name=file_name,
+            file_size=media.file_size,
+            mime_type=media.mime_type,
+            caption=caption,
+            file_type=media.mime_type.split('/')[0]
+        )
+    except ValidationError:
+        logger.error('Error occurred while saving file in database')
+        return 'err'
+    else:
+        try:
+            await file.commit()
+        except DuplicateKeyError:      
+            logger.info(f'{getattr(media, "file_name", "NO_FILE")} is already saved in database')
+            return 'dup'
+        else:
+            logger.info(f'{getattr(media, "file_name", "NO_FILE")} is saved to database')
+            return 'suc'
+
 async def get_bad_files(query, file_type=None, offset=0, filter=False):
     query = query.strip()
     if not query:
         raw_pattern = '.'
-    elif ' ' not in query:
-        raw_pattern = r'(\b|[\.\+\-_])' + query + r'(\b|[\.\+\-_])'
     else:
-        raw_pattern = query.replace(' ', r'.*[\s\.\+\-_]')
+        search_terms = extract_search_terms(query)
+        raw_pattern = build_regex_pattern(search_terms)
     
     try:
         regex = re.compile(raw_pattern, flags=re.IGNORECASE)
-    except:
-        return []
+    except re.error:
+        return [], 0
 
-    # Search in both file_name and caption
     filter = {
         '$or': [
             {'file_name': regex},
@@ -133,7 +181,7 @@ async def get_bad_files(query, file_type=None, offset=0, filter=False):
     cursor.sort('$natural', -1)
     files = await cursor.to_list(length=total_results)
     return files, total_results
-    
+
 async def get_file_details(query):
     filter = {
         '$or': [
@@ -176,4 +224,3 @@ def unpack_new_file_id(new_file_id):
     )
     file_ref = encode_file_ref(decoded.file_reference)
     return file_id, file_ref
-    
