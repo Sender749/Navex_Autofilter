@@ -17,6 +17,17 @@ client = AsyncIOMotorClient(DATABASE_URI)
 mydb = client[DATABASE_NAME]
 instance = Instance.from_db(mydb)
 
+# Collection for filter words
+filter_words_collection = mydb["filter_words"]
+
+# Default filter words
+DEFAULT_FILTER_WORDS = {
+    'bhai', 'bhje do', 'send', 'please', 'hai', 'hai kya', 'kya', 
+    'do', 'de do', 'chahiye', 'dijiye', 'dedo', 'south',
+    'gurnal', 'bhular', 'movie', 'series', 'anime', 'link',
+    'download', 'de', 'dear', 'bro', 'hi', 'hello', 'pls', 'plz'
+}
+
 @instance.register
 class Media(Document):
     file_id = fields.StrField(attribute='_id')
@@ -31,26 +42,44 @@ class Media(Document):
         indexes = ('$file_name', )
         collection_name = COLLECTION_NAME
 
+async def get_filter_words():
+    """Get current filter words from database"""
+    try:
+        doc = await filter_words_collection.find_one({"_id": "filter_words"})
+        if doc:
+            return set(doc["words"])
+        # Initialize with default words if not exists
+        await set_filter_words(DEFAULT_FILTER_WORDS)
+        return DEFAULT_FILTER_WORDS
+    except Exception as e:
+        logger.error(f"Error getting filter words: {e}")
+        return DEFAULT_FILTER_WORDS
+
+async def set_filter_words(words):
+    """Update filter words in database"""
+    try:
+        words_list = list(words) if isinstance(words, set) else words
+        await filter_words_collection.update_one(
+            {"_id": "filter_words"},
+            {"$set": {"words": words_list}},
+            upsert=True
+        )
+        logger.info("Filter words updated successfully")
+    except Exception as e:
+        logger.error(f"Error setting filter words: {e}")
+
 async def get_files_db_size():
     return (await mydb.command("dbstats"))['dataSize']
 
-def extract_search_terms(query):
+def extract_search_terms(query, filter_words):
     """Extract potential search terms from user query"""
     query = query.strip().lower()
-    
-    # Remove common filler words/phrases (customize this list as needed)
-    filler_words = {
-        'bhai', 'bhje do', 'send', 'please', 'hai', 'hai kya', 'kya', 
-        'do', 'de do', 'chahiye', 'dijiye', 'dedo', 'south',
-        'gurnal', 'bhular', 'movie', 'series', 'anime', 'link',
-        'download', 'de', 'dear', 'bro', 'hi', 'hello', 'pls', 'plz'
-    }
     
     # Remove special characters and split into words
     words = re.sub(r'[^\w\s]', '', query).split()
     
     # Filter out filler words and very short words
-    search_terms = [word for word in words if word not in filler_words and len(word) > 2]
+    search_terms = [word for word in words if word not in filter_words and len(word) > 2]
     
     # Also consider multi-word combinations
     all_terms = search_terms.copy()
@@ -84,10 +113,14 @@ def build_regex_pattern(terms):
 async def get_search_results(query, max_results=MAX_BTN, offset=0, lang=None):
     """Improved search that handles queries with extra text"""
     query = query.strip()
+    
+    # Get current filter words
+    filter_words = await get_filter_words()
+    
     if not query:
         raw_pattern = '.'
     else:
-        search_terms = extract_search_terms(query)
+        search_terms = extract_search_terms(query, filter_words)
         raw_pattern = build_regex_pattern(search_terms)
     
     try:
@@ -123,6 +156,10 @@ async def get_search_results(query, max_results=MAX_BTN, offset=0, lang=None):
     if next_offset >= total_results:
         next_offset = ''       
     return files, next_offset, total_results
+
+# [Rest of your existing functions remain unchanged...]
+# save_file(), get_bad_files(), get_file_details(), 
+# encode_file_id(), encode_file_ref(), unpack_new_file_id()
 
 async def save_file(media):
     """Save file in database"""
