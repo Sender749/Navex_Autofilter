@@ -80,16 +80,14 @@ async def get_search_results(query, max_results=MAX_BTN, offset=0, lang=None):
     
     if not query:
         raw_pattern = '.'
+    elif ' ' not in query:
+        raw_pattern = r'(\b|[\.\+\-_])' + query + r'(\b|[\.\+\-_])'
     else:
-        search_terms = extract_search_terms(query, filter_words)
-        raw_pattern = build_regex_pattern(search_terms)
-    
+        raw_pattern = query.replace(' ', r'.*[\s\.\+\-_]') 
     try:
         regex = re.compile(raw_pattern, flags=re.IGNORECASE)
-    except re.error as e:
-        logger.error(f"Regex error for pattern '{raw_pattern}': {e}")
+    except:
         regex = query
-
     # Search in both file_name and caption
     filter = {
         '$or': [
