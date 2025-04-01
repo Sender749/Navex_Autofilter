@@ -78,16 +78,27 @@ async def get_search_results(query, max_results=MAX_BTN, offset=0, lang=None):
     # Get current filter words
     filter_words = await get_filter_words()
     
-    if not query:
-        raw_pattern = '.'
-    elif ' ' not in query:
-        raw_pattern = r'(\b|[\.\+\-_])' + query + r'(\b|[\.\+\-_])'
+    # Process query to remove filter words
+    if query:
+        # Create a regex pattern to match filter words as whole words
+        filter_pattern = r'\b(?:' + '|'.join(map(re.escape, filter_words)) + r')\b'
+        cleaned_query = re.sub(filter_pattern, '', query, flags=re.IGNORECASE)
+        cleaned_query = ' '.join(cleaned_query.split())  # Remove extra spaces
     else:
-        raw_pattern = query.replace(' ', r'.*[\s\.\+\-_]') 
+        cleaned_query = query
+    
+    if not cleaned_query:
+        raw_pattern = '.'
+    elif ' ' not in cleaned_query:
+        raw_pattern = r'(\b|[\.\+\-_])' + cleaned_query + r'(\b|[\.\+\-_])'
+    else:
+        raw_pattern = cleaned_query.replace(' ', r'.*[\s\.\+\-_]')
+    
     try:
         regex = re.compile(raw_pattern, flags=re.IGNORECASE)
     except:
-        regex = query
+        regex = cleaned_query
+
     # Search in both file_name and caption
     filter = {
         '$or': [
