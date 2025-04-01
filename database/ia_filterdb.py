@@ -122,7 +122,7 @@ async def save_file(media):
     """Save file in database"""
     file_id, file_ref = unpack_new_file_id(media.file_id)
     file_name = re.sub(r"(_|\-|\.|\+)", " ", str(media.file_name))
-    caption = media.caption.html if media.caption else media.file_name
+    caption = media.caption.html if media.caption else file_name
 
     try:
         file = Media(
@@ -186,7 +186,13 @@ async def get_file_details(query):
     }
     cursor = Media.find(filter)
     filedetails = await cursor.to_list(length=1)
-    return filedetails
+    if filedetails:
+        filedetails = filedetails[0]
+        # Ensure caption is never None
+        if not filedetails.caption:
+            filedetails.caption = filedetails.file_name
+        return filedetails
+    return None
 
 def encode_file_id(s: bytes) -> str:
     r = b""
