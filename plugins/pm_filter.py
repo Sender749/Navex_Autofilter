@@ -705,6 +705,36 @@ async def advantage_spoll_choker(bot, query):
         except:
             pass
 
+@Client.on_callback_query(filters.regex(r"^req_admin"))
+async def request_to_admin(bot, query):
+    _, search, user_id = query.data.split('#')
+    if int(user_id) != query.from_user.id:
+        return await query.answer(script.ALRT_TXT, show_alert=True)
+    
+    # Create buttons similar to /request command
+    buttons = [[
+        InlineKeyboardButton('👀 View Request', url=f"{query.message.link}")
+    ],[
+        InlineKeyboardButton('⚙ Show Options', callback_data=f'show_options#{query.from_user.id}#{query.message.id}')
+    ]]
+    
+    # Send to request channel (same as /request command)
+    sent_request = await bot.send_message(
+        REQUEST_CHANNEL,
+        script.REQUEST_TXT.format(query.from_user.mention, query.from_user.id, search),
+        reply_markup=InlineKeyboardMarkup(buttons)
+    )
+    
+    # Send confirmation to user
+    btn = [[
+        InlineKeyboardButton('✨ View Your Request ✨', url=f"{sent_request.link}")
+    ]]
+    await query.message.edit_text(
+        text="<b>✅ Your request has been sent to admin!</b>",
+        reply_markup=InlineKeyboardMarkup(btn)
+    )
+    await query.answer()
+
 @Client.on_callback_query(filters.regex(r"^cfiles"))
 async def pmfile_cb(client, query):
     _, userid, fileid = query.data.split("#")
