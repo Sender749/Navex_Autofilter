@@ -201,7 +201,6 @@ async def get_file_details(query):
         if not filedetails.caption:
             filedetails.caption = filedetails.file_name
         return filedetails
-    return None
 
 def encode_file_id(s: bytes) -> str:
     r = b""
