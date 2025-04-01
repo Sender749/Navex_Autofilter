@@ -1,6 +1,6 @@
 from pyrogram import filters
 from Jisshu.bot import JisshuBot
-from ia.filterdb import get_filter_words, set_filter_words
+from database.ia_filterdb import get_filter_words, set_filter_words
 from info import ADMINS
 
 @JisshuBot.on_message(filters.command("filterword") & filters.user(ADMINS))
