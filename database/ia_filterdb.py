@@ -71,35 +71,6 @@ async def set_filter_words(words):
 async def get_files_db_size():
     return (await mydb.command("dbstats"))['dataSize']
 
-async def save_file(media):
-    """Save file in database"""
-    file_id, file_ref = unpack_new_file_id(media.file_id)
-    file_name = re.sub(r"(_|\-|\.|\+)", " ", str(media.file_name))
-    caption = media.caption.html if media.caption else media.file_name
-
-    try:
-        file = Media(
-            file_id=file_id,
-            file_ref=file_ref,
-            file_name=file_name,
-            file_size=media.file_size,
-            mime_type=media.mime_type,
-            caption=caption,
-            file_type=media.mime_type.split('/')[0]
-        )
-    except ValidationError:
-        logger.error('Error occurred while saving file in database')
-        return 'err'
-    else:
-        try:
-            await file.commit()
-        except DuplicateKeyError:      
-            logger.info(f'{getattr(media, "file_name", "NO_FILE")} is already saved in database')
-            return 'dup'
-        else:
-            logger.info(f'{getattr(media, "file_name", "NO_FILE")} is saved to database')
-            return 'suc'
-
 async def get_search_results(query, max_results=MAX_BTN, offset=0, lang=None):
     """Improved search that handles queries with extra text"""
     query = query.strip()
@@ -146,6 +117,35 @@ async def get_search_results(query, max_results=MAX_BTN, offset=0, lang=None):
     if next_offset >= total_results:
         next_offset = ''       
     return files, next_offset, total_results
+
+async def save_file(media):
+    """Save file in database"""
+    file_id, file_ref = unpack_new_file_id(media.file_id)
+    file_name = re.sub(r"(_|\-|\.|\+)", " ", str(media.file_name))
+    caption = media.caption.html if media.caption else media.file_name
+
+    try:
+        file = Media(
+            file_id=file_id,
+            file_ref=file_ref,
+            file_name=file_name,
+            file_size=media.file_size,
+            mime_type=media.mime_type,
+            caption=caption,
+            file_type=media.mime_type.split('/')[0]
+        )
+    except ValidationError:
+        logger.error('Error occurred while saving file in database')
+        return 'err'
+    else:
+        try:
+            await file.commit()
+        except DuplicateKeyError:      
+            logger.info(f'{getattr(media, "file_name", "NO_FILE")} is already saved in database')
+            return 'dup'
+        else:
+            logger.info(f'{getattr(media, "file_name", "NO_FILE")} is saved to database')
+            return 'suc'
 
 async def get_bad_files(query, file_type=None, offset=0, filter=False):
     query = query.strip()
