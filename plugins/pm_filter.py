@@ -688,9 +688,9 @@ async def advantage_spoll_choker(bot, query):
     else:
         # Create buttons for the message
         buttons = [[
-            InlineKeyboardButton("📮 Request to Admin", callback_data=f"req_admin#{search}#{query.from_user.id}")
+            InlineKeyboardButton("⚠️ ʀᴇᴏ̨ᴜᴇsᴛ ᴛᴏ ᴀᴅᴍɪɴ ⚠️", callback_data=f"req_admin#{search}#{query.from_user.id}")
         ], [
-            InlineKeyboardButton("🚫 Close", callback_data="close_data")
+            InlineKeyboardButton("🚫 ᴄʟᴏsᴇ 🚫", callback_data="close_data")
         ]]
         
         # Edit message with buttons
@@ -727,7 +727,7 @@ async def request_to_admin(bot, query):
     
     # Send confirmation to user
     btn = [[
-        InlineKeyboardButton('✨ View Your Request ✨', url=f"{sent_request.link}")
+        InlineKeyboardButton('✨ ᴠɪᴇᴡ ʏᴏᴜʀ ʀᴇᴏ̨ᴜᴇsᴛ ✨', url=f"{sent_request.link}")
     ]]
     await query.message.edit_text(
         text="<b>✅ Your request has been sent to admin!</b>",
@@ -1677,10 +1677,11 @@ async def advantage_spell_chok(message):
         except:
             pass
         return
+
     if not movies:
         google = search.replace(" ", "+")
         button = [[
-            InlineKeyboardButton("🔍 ᴄʜᴇᴄᴋ sᴘᴇʟʟɪɴɢ ᴏɴ ɢᴏᴏɢʟᴇ 🔍", url=f"https://www.google.com/search?q={google}")
+            InlineKeyboardButton("🔍 Check spelling on Google", url=f"https://www.google.com/search?q={google}")
         ]]
         k = await message.reply_text(text=script.I_CUDNT.format(search), reply_markup=InlineKeyboardMarkup(button))
         await asyncio.sleep(120)
@@ -1690,19 +1691,70 @@ async def advantage_spell_chok(message):
         except:
             pass
         return
+
     user = message.from_user.id if message.from_user else 0
+    
+    # Modified button creation with custom callback data
     buttons = [[
-        InlineKeyboardButton(text=movie.get('title'), callback_data=f"spol#{movie.movieID}#{user}")
-    ]
-        for movie in movies
-    ]
-    buttons.append(
-        [InlineKeyboardButton(text="🚫 ᴄʟᴏsᴇ 🚫", callback_data='close_data')]
+        InlineKeyboardButton(
+            text=movie.get('title'), 
+            callback_data=f"spol_req#{movie.movieID}#{user}#{quote_plus(movie.get('title'))}"
+        )
+    ] for movie in movies]
+    
+    buttons.append([
+        InlineKeyboardButton(text="🚫 Close", callback_data='close_data')
+    ])
+    
+    d = await message.reply_text(
+        text=script.CUDNT_FND.format(message.from_user.mention),
+        reply_markup=InlineKeyboardMarkup(buttons),
+        reply_to_message_id=message.id
     )
-    d = await message.reply_text(text=script.CUDNT_FND.format(message.from_user.mention), reply_markup=InlineKeyboardMarkup(buttons), reply_to_message_id=message.id)
     await asyncio.sleep(120)
     await d.delete()
     try:
         await message.delete()
     except:
         pass
+
+
+@Client.on_callback_query(filters.regex(r"^spol_req"))
+async def spol_with_request_option(bot, query):
+    _, id, user, movie_title = query.data.split('#')
+    movie_title = unquote_plus(movie_title)
+    
+    if int(user) != 0 and query.from_user.id != int(user):
+        return await query.answer(script.ALRT_TXT, show_alert=True)
+    
+    await query.answer("Searching...")
+    files, offset, total_results = await get_search_results(movie_title)
+    
+    if files:
+        k = (movie_title, files, offset, total_results)
+        await auto_filter(bot, query, k)
+    else:
+        # Create buttons for no results case
+        buttons = [
+            [
+                InlineKeyboardButton(
+                    "⚠️ ʀᴇᴏ̨ᴜᴇsᴛ ᴛᴏ ᴀᴅᴍɪɴ ⚠️", 
+                    callback_data=f"req_admin#{movie_title}#{query.from_user.id}"
+                ),
+                InlineKeyboardButton(
+                    "🔍 sᴇᴀʀᴄʜ ᴏɴ ɢᴏᴏɢʟᴇ 🔍", 
+                    url=f"https://www.google.com/search?q={quote_plus(movie_title)}"
+                )
+            ],
+            [
+                InlineKeyboardButton("🚫 ᴄʟᴏsᴇ 🚫", callback_data="close_data")
+            ]
+        ]
+        
+        # Edit message with new buttons
+        await query.message.edit_text(
+            text=script.I_CUDNT.format(movie_title),
+            reply_markup=InlineKeyboardMarkup(buttons)
+        )
+
+
