@@ -121,11 +121,11 @@ User - {}"""
 
     OLD_ALRT_TXT = """ʏᴏᴜ ᴀʀᴇ ᴜsɪɴɢ ᴍʏ ᴏʟᴅ ᴍᴇssᴀɢᴇs..sᴇɴᴅ ᴀ ɴᴇᴡ ʀᴇǫᴜᴇsᴛ.."""
 
-    NO_RESULT_TXT = """<b>File not found in database, request your file using "#request"\n\n<blockquote>Format : #request Ironman Movie<blockquote></b>"""
+    NO_RESULT_TXT = """<b>sᴏʀʀʏ {} ʙᴜᴅᴅʏ 💔\n\nᴡᴇ ᴅᴏɴ'ᴛ ʜᴀᴠᴇ ʀᴇᴏ̨ᴜᴇsᴛᴇᴅ ғɪʟᴇ. ᴄʟɪᴄᴋ ᴏɴ ʙᴇʟᴏᴡ ʙᴜᴛᴛᴏɴ ғᴏʀ sᴇɴᴅ ʀᴇᴏ̨ᴜᴇsᴛ ᴛᴏ ᴀᴅᴍɪɴ</b>"""
     
     I_CUDNT = """🤧 𝗛𝗲𝗹𝗹𝗼 {}
 
-𝗜 𝗰𝗼𝘂𝗹𝗱𝗻'𝘁 𝗳𝗶𝗻𝗱 𝗮𝗻𝘆 𝗺𝗼𝘃𝗶𝗲 𝗼𝗿 𝘀𝗲𝗿𝗶𝗲𝘀 𝗶𝗻 𝘁𝗵𝗮𝘁 𝗻𝗮𝗺𝗲.. 😐"""
+ᴄʟɪᴄᴋ ᴏɴ "sᴇᴀʀᴄʜ ᴏɴ ɢᴏᴏɢʟᴇ", ɪғ ʏᴏᴜʀ sᴘᴇʟʟɪɴɢ ɪs ᴡʀᴏɴɢ. ᴏᴛʜᴇʀᴡɪsᴇ ᴄʟɪᴄᴋ ᴏɴ "ʀᴇᴏ̨ᴜᴇsᴛ ᴛᴏ ᴀᴅᴍɪɴ".\n\nᴀᴅᴍɪɴ ᴡᴇʟʟ ᴜᴘʟᴏᴀᴅ ʀᴇᴏ̨ᴜᴇsᴛᴇᴅ ғɪʟᴇs sʜᴏʀᴛʟʏ 🤗"""
 
     I_CUD_NT = """😑 𝗛𝗲𝗹𝗹𝗼 {}
 
