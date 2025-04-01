@@ -680,13 +680,24 @@ async def advantage_spoll_choker(bot, query):
         return await query.answer(script.ALRT_TXT, show_alert=True)
     movie = await get_poster(id, id=True)
     search = movie.get('title')
-    await query.answer('bhai sahab hamare pass nahin Hai')
+    await query.answer('Searching...')
     files, offset, total_results = await get_search_results(search)
     if files:
         k = (search, files, offset, total_results)
         await auto_filter(bot, query, k)
     else:
-        k = await query.message.edit(script.NO_RESULT_TXT)
+        # Create buttons for the message
+        buttons = [[
+            InlineKeyboardButton("📮 Request to Admin", callback_data=f"req_admin#{search}#{query.from_user.id}")
+        ], [
+            InlineKeyboardButton("🚫 Close", callback_data="close_data")
+        ]]
+        
+        # Edit message with buttons
+        k = await query.message.edit_text(
+            text=script.NO_RESULT_TXT,
+            reply_markup=InlineKeyboardMarkup(buttons)
+        )
         await asyncio.sleep(60)
         await k.delete()
         try:
