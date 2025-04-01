@@ -71,44 +71,34 @@ async def set_filter_words(words):
 async def get_files_db_size():
     return (await mydb.command("dbstats"))['dataSize']
 
-def extract_search_terms(query, filter_words):
-    """Extract potential search terms from user query"""
-    query = query.strip().lower()
-    
-    # Remove special characters and split into words
-    words = re.sub(r'[^\w\s]', '', query).split()
-    
-    # Filter out filler words and very short words
-    search_terms = [word for word in words if word not in filter_words and len(word) > 2]
-    
-    # Also consider multi-word combinations
-    all_terms = search_terms.copy()
-    for i in range(len(search_terms)):
-        for j in range(i+2, min(i+4, len(search_terms)+1)):  # Try 2-3 word combinations
-            term = ' '.join(search_terms[i:j])
-            if len(term) > 5:  # Only consider meaningful multi-word terms
-                all_terms.append(term)
-    
-    # Log extracted terms for debugging
-    logger.info(f"Extracted search terms from '{query}': {all_terms}")
-    
-    return list(set(all_terms))  # Remove duplicates
+async def save_file(media):
+    """Save file in database"""
+    file_id, file_ref = unpack_new_file_id(media.file_id)
+    file_name = re.sub(r"(_|\-|\.|\+)", " ", str(media.file_name))
+    caption = media.caption.html if media.caption else media.file_name
 
-def build_regex_pattern(terms):
-    """Build regex pattern from search terms"""
-    if not terms:
-        return '.'
-    
-    patterns = []
-    for term in terms:
-        if ' ' not in term:
-            # Single word pattern with word boundaries
-            patterns.append(r'(\b|[\.\+\-_])' + re.escape(term) + r'(\b|[\.\+\-_])')
+    try:
+        file = Media(
+            file_id=file_id,
+            file_ref=file_ref,
+            file_name=file_name,
+            file_size=media.file_size,
+            mime_type=media.mime_type,
+            caption=caption,
+            file_type=media.mime_type.split('/')[0]
+        )
+    except ValidationError:
+        logger.error('Error occurred while saving file in database')
+        return 'err'
+    else:
+        try:
+            await file.commit()
+        except DuplicateKeyError:      
+            logger.info(f'{getattr(media, "file_name", "NO_FILE")} is already saved in database')
+            return 'dup'
         else:
-            # Multi-word pattern with flexible spacing
-            patterns.append(re.escape(term).replace(' ', r'[\s\.\+\-_]+'))
-    
-    return '|'.join(patterns)
+            logger.info(f'{getattr(media, "file_name", "NO_FILE")} is saved to database')
+            return 'suc'
 
 async def get_search_results(query, max_results=MAX_BTN, offset=0, lang=None):
     """Improved search that handles queries with extra text"""
@@ -156,39 +146,6 @@ async def get_search_results(query, max_results=MAX_BTN, offset=0, lang=None):
     if next_offset >= total_results:
         next_offset = ''       
     return files, next_offset, total_results
-
-# [Rest of your existing functions remain unchanged...]
-# save_file(), get_bad_files(), get_file_details(), 
-# encode_file_id(), encode_file_ref(), unpack_new_file_id()
-
-async def save_file(media):
-    """Save file in database"""
-    file_id, file_ref = unpack_new_file_id(media.file_id)
-    file_name = re.sub(r"(_|\-|\.|\+)", " ", str(media.file_name))
-    caption = media.caption.html if media.caption else None
-
-    try:
-        file = Media(
-            file_id=file_id,
-            file_ref=file_ref,
-            file_name=file_name,
-            file_size=media.file_size,
-            mime_type=media.mime_type,
-            caption=caption,
-            file_type=media.mime_type.split('/')[0]
-        )
-    except ValidationError:
-        logger.error('Error occurred while saving file in database')
-        return 'err'
-    else:
-        try:
-            await file.commit()
-        except DuplicateKeyError:      
-            logger.info(f'{getattr(media, "file_name", "NO_FILE")} is already saved in database')
-            return 'dup'
-        else:
-            logger.info(f'{getattr(media, "file_name", "NO_FILE")} is saved to database')
-            return 'suc'
 
 async def get_bad_files(query, file_type=None, offset=0, filter=False):
     query = query.strip()
