@@ -43,7 +43,7 @@ SUPPORT_CHAT = environ.get('SUPPORT_CHAT', 'https://t.me/Navexdisscussion') #Sup
 BIN_CHANNEL = int(os.environ.get("BIN_CHANNEL", "-1002452746830"))  # Replace with your bin channel ID
 #---------------------------------------------------------------
 #---------------------------------------------------------------
-IS_VERIFY = is_enabled('IS_VERIFY', True)
+IS_VERIFY = is_enabled('IS_VERIFY', False)
 #---------------------------------------------------------------
 TUTORIAL = environ.get("TUTORIAL", "https://t.me/Navexdisscussion/4")
 TUTORIAL_2 = environ.get("TUTORIAL_2", "https://t.me/Navexdisscussion/33")
