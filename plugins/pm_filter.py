@@ -1657,6 +1657,7 @@ async def auto_filter(client, msg, spoll=False , pm_mode = False):
             except:
                 pass
     return            
+
 async def advantage_spell_chok(message):
     mv_id = message.id
     search = message.text
@@ -1677,13 +1678,21 @@ async def advantage_spell_chok(message):
         except:
             pass
         return
-
     if not movies:
         google = search.replace(" ", "+")
-        button = [[
-            InlineKeyboardButton("🔍 Check spelling on Google", url=f"https://www.google.com/search?q={google}")
-        ]]
-        k = await message.reply_text(text=script.I_CUDNT.format(search), reply_markup=InlineKeyboardMarkup(button))
+        button = [
+            [
+                InlineKeyboardButton("🔍 ᴄʜᴇᴄᴋ sᴘᴇʟʟɪɴɢ ᴏɴ ɢᴏᴏɢʟᴇ 🔍", url=f"https://www.google.com/search?q={google}")
+            ],
+            [
+                InlineKeyboardButton("📮 ʀᴇǫᴜᴇsᴛ ᴛᴏ ᴀᴅᴍɪɴ 📮", callback_data=f"req_admin#{search}#{message.from_user.id}")
+            ]
+        ]
+        k = await message.reply_text(
+            text=script.I_CUDNT.format(search), 
+            reply_markup=InlineKeyboardMarkup(button),
+            reply_to_message_id=message.id
+        )
         await asyncio.sleep(120)
         await k.delete()
         try:
@@ -1691,21 +1700,16 @@ async def advantage_spell_chok(message):
         except:
             pass
         return
-
+    
     user = message.from_user.id if message.from_user else 0
-    
-    # Modified button creation with custom callback data
-    buttons = [[
-        InlineKeyboardButton(
-            text=movie.get('title'), 
-            callback_data=f"spol_req#{movie.movieID}#{user}#{quote_plus(movie.get('title'))}"
-        )
-    ] for movie in movies]
-    
-    buttons.append([
-        InlineKeyboardButton(text="🚫 Close", callback_data='close_data')
-    ])
-    
+    buttons = [
+        [
+            InlineKeyboardButton(text=movie.get('title'), callback_data=f"spol#{movie.movieID}#{user}")
+        ] for movie in movies
+    ]
+    buttons.append(
+        [InlineKeyboardButton(text="🚫 ᴄʟᴏsᴇ 🚫", callback_data='close_data')]
+    )
     d = await message.reply_text(
         text=script.CUDNT_FND.format(message.from_user.mention),
         reply_markup=InlineKeyboardMarkup(buttons),
@@ -1717,44 +1721,3 @@ async def advantage_spell_chok(message):
         await message.delete()
     except:
         pass
-
-
-@Client.on_callback_query(filters.regex(r"^spol_req"))
-async def spol_with_request_option(bot, query):
-    _, id, user, movie_title = query.data.split('#')
-    movie_title = unquote_plus(movie_title)
-    
-    if int(user) != 0 and query.from_user.id != int(user):
-        return await query.answer(script.ALRT_TXT, show_alert=True)
-    
-    await query.answer("Searching...")
-    files, offset, total_results = await get_search_results(movie_title)
-    
-    if files:
-        k = (movie_title, files, offset, total_results)
-        await auto_filter(bot, query, k)
-    else:
-        # Create buttons for no results case
-        buttons = [
-            [
-                InlineKeyboardButton(
-                    "⚠️ ʀᴇᴏ̨ᴜᴇsᴛ ᴛᴏ ᴀᴅᴍɪɴ ⚠️", 
-                    callback_data=f"req_admin#{movie_title}#{query.from_user.id}"
-                ),
-                InlineKeyboardButton(
-                    "🔍 sᴇᴀʀᴄʜ ᴏɴ ɢᴏᴏɢʟᴇ 🔍", 
-                    url=f"https://www.google.com/search?q={quote_plus(movie_title)}"
-                )
-            ],
-            [
-                InlineKeyboardButton("🚫 ᴄʟᴏsᴇ 🚫", callback_data="close_data")
-            ]
-        ]
-        
-        # Edit message with new buttons
-        await query.message.edit_text(
-            text=script.I_CUDNT.format(movie_title),
-            reply_markup=InlineKeyboardMarkup(buttons)
-        )
-
-
