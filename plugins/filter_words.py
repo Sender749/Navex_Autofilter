@@ -10,12 +10,12 @@ logger = logging.getLogger(__name__)
 async def show_filter_words(client, message):
     try:
         words = await get_filter_words()
-        formatted_words = "\n".join([f"• {word}" for word in sorted(words)])
+        formatted_words = ", ".join(sorted(words)) 
         count = len(words)
         await message.reply_text(
             f"📝 Current filter words ({count}):\n\n"
             f"{formatted_words}\n\n"
-            "To add/update: /set_filterword word1, word2, multi word phrase"
+            "To add more words : /set_filterword send, movie, series ha kya"
         )
     except Exception as e:
         logger.error(f"Error in show_filter_words: {e}")
