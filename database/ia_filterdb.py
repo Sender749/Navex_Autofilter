@@ -31,7 +31,10 @@ class Media(Document):
     file_type = fields.StrField(allow_none=True)
 
     class Meta:
-        indexes = ('$file_name', '$caption')  # Added caption index
+        indexes = [
+            'file_name',  # Regular index on file_name
+            'caption',    # Regular index on caption
+        ]
         collection_name = COLLECTION_NAME
 
 async def get_filter_words():
@@ -118,8 +121,8 @@ async def get_search_results(query, max_results=MAX_BTN, offset=0, lang=None):
     # Search in both file_name and caption
     filter = {
         '$or': [
-            {'file_name': regex},
-            {'caption': regex}
+            {'file_name': {'$regex': regex}},
+            {'caption': {'$regex': regex}}
         ]
     }
 
