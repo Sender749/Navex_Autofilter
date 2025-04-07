@@ -1252,9 +1252,9 @@ async def cb_handler(client: Client, query: CallbackQuery):
         buttons = [[
             InlineKeyboardButton("😊 ᴀʟʀᴇᴀᴅʏ ᴀᴠᴀɪʟᴀʙʟᴇ 😊", callback_data=f"already_available#{user_id}#{msg_id}")
         ],[
-            InlineKeyboardButton("‼️ ɴᴏᴛ ᴀᴠᴀɪʟᴀʙʟᴇ ‼️", callback_data=f"not_available#{user_id}#{msg_id}")
+            InlineKeyboardButton("‼️ ɴᴏᴛ ʀᴇʟᴇᴀsᴇᴅ ʏᴇᴛ ‼️", callback_data=f"not_available#{user_id}#{msg_id}")
         ],[
-            InlineKeyboardButton("😒 ᴅᴜᴅᴇ, ɢɪᴠᴇ ᴍᴇ ᴍᴏʀᴇ ɪɴғᴏ (ʟɪᴋᴇ: ʏᴇᴀʀ, ʟᴀɴɢᴜᴀɢᴇ ᴇᴛᴄ.) 😒", callback_data=f"year#{user_id}#{msg_id}")
+            InlineKeyboardButton("😒 ᴅᴜᴅᴇ, ɢɪᴠᴇ ᴍᴇ ᴍᴏʀᴇ ɪɴғᴏ 😒", callback_data=f"year#{user_id}#{msg_id}")
         ],[
             InlineKeyboardButton("⚠️ ᴅᴜᴅᴇ, ᴄʜᴇᴄᴋ ʏᴏᴜʀ sᴘᴇʟʟɪɴɢ ⚠️", callback_data=f"upload_in#{user_id}#{msg_id}")
         ],[
@@ -1274,7 +1274,7 @@ async def cb_handler(client: Client, query: CallbackQuery):
         chnl_id = query.message.chat.id
         userid = query.from_user.id
         buttons = [[
-            InlineKeyboardButton("🚫 ɴᴏᴛ ᴀᴠᴀɪʟᴀʙʟᴇ 🚫", callback_data=f"na_alert#{user_id}")
+            InlineKeyboardButton("🚫 ɴᴏᴛ ʀᴇʟᴇᴀsᴇᴅ ʏᴇᴛ 🚫", callback_data=f"na_alert#{user_id}")
         ]]
         btn = [[
             InlineKeyboardButton("♻️ ᴠɪᴇᴡ sᴛᴀᴛᴜs ♻️", url=f"{query.message.link}")
@@ -1359,9 +1359,9 @@ async def cb_handler(client: Client, query: CallbackQuery):
             await query.message.edit_text(f"<s>{request}</s>")
             await query.message.edit_reply_markup(InlineKeyboardMarkup(buttons))
             try:
-                await client.send_message(chat_id=user_id, text="<b>ʏᴏᴜʀ ʀᴇǫᴜᴇꜱᴛ ᴡɪʟʟ ʙᴇ ᴜᴘʟᴏᴀᴅᴇᴅ ᴡɪᴛʜɪɴ 1 ʜᴏᴜʀ 😁</b>", reply_markup=InlineKeyboardMarkup(btn))
+                await client.send_message(chat_id=user_id, text="<b>ᴍᴀᴋᴇ sᴜʀᴇ, ʏᴏᴜʀ sᴘᴇʟʟɪɴɢ ɪs ᴄᴏʀʀᴇᴄᴛ ⚠️</b>", reply_markup=InlineKeyboardMarkup(btn))
             except UserIsBlocked:
-                await client.send_message(SUPPORT_GROUP, text=f"<b>💥 ʜᴇʟʟᴏ {user.mention},\n\nʏᴏᴜʀ ʀᴇǫᴜᴇꜱᴛ ᴡɪʟʟ ʙᴇ ᴜᴘʟᴏᴀᴅᴇᴅ ᴡɪᴛʜɪɴ 1 ʜᴏᴜʀ 😁</b>", reply_markup=InlineKeyboardMarkup(btn), reply_to_message_id=int(msg_id))
+                await client.send_message(SUPPORT_GROUP, text=f"<b>💥 ʜᴇʟʟᴏ {user.mention},\n\nᴍᴀᴋᴇ sᴜʀᴇ, ʏᴏᴜʀ sᴘᴇʟʟɪɴɢ ɪs ᴄᴏʀʀᴇᴄᴛ. ᴄʜᴇᴄᴋ sᴘᴇʟʟɪɴɢ ᴏɴ ɢᴏᴏɢʟᴇ ᴀɴᴅ ᴛʜᴇɴ sᴇᴀʀᴄʜ ᴀɢᴀɪɴ ❗</b>", reply_markup=InlineKeyboardMarkup(btn), reply_to_message_id=int(msg_id))
         else:
             await query.answer(script.ALRT_TXT, show_alert=True)
 
@@ -1383,9 +1383,9 @@ async def cb_handler(client: Client, query: CallbackQuery):
             await query.message.edit_text(f"<s>{request}</s>")
             await query.message.edit_reply_markup(InlineKeyboardMarkup(buttons))
             try:
-                await client.send_message(chat_id=user_id, text="<b>ʙʀᴏ ᴘʟᴇᴀꜱᴇ ᴛᴇʟʟ ᴍᴇ ʏᴇᴀʀꜱ ᴀɴᴅ ʟᴀɴɢᴜᴀɢᴇ, ᴛʜᴇɴ ɪ ᴡɪʟʟ ᴜᴘʟᴏᴀᴅ 😬</b>", reply_markup=InlineKeyboardMarkup(btn))
+                await client.send_message(chat_id=user_id, text="<b>ʙʀᴏ ᴘʟᴇᴀꜱᴇ ᴛᴇʟʟ ᴍᴇ ʏᴇᴀʀꜱ, ʟᴀɴɢᴜᴀɢᴇ, ʙᴏʟʟʏᴡᴏᴏᴅ ᴏʀ ʜᴏʟʟʏᴡᴏᴏᴅ ᴇᴛᴄ., ᴛʜᴇɴ ɪ ᴡɪʟʟ ᴜᴘʟᴏᴀᴅ 😬</b>", reply_markup=InlineKeyboardMarkup(btn))
             except UserIsBlocked:
-                await client.send_message(SUPPORT_GROUP, text=f"<b>💥 ʜᴇʟʟᴏ {user.mention},\n\nʙʀᴏ ᴘʟᴇᴀꜱᴇ ᴛᴇʟʟ ᴍᴇ ʏᴇᴀʀꜱ ᴀɴᴅ ʟᴀɴɢᴜᴀɢᴇ, ᴛʜᴇɴ ɪ ᴡɪʟʟ ᴜᴘʟᴏᴀᴅ 😬</b>", reply_markup=InlineKeyboardMarkup(btn), reply_to_message_id=int(msg_id))
+                await client.send_message(SUPPORT_GROUP, text=f"<b>💥 ʜᴇʟʟᴏ {user.mention},\n\nʙʀᴏ ᴘʟᴇᴀꜱᴇ ᴛᴇʟʟ ᴍᴇ ʏᴇᴀʀꜱ, ʟᴀɴɢᴜᴀɢᴇ, ʙᴏʟʟʏᴡᴏᴏᴅ ᴏʀ ʜᴏʟʟʏᴡᴏᴏᴅ ᴇᴛᴄ., ᴛʜᴇɴ ɪ ᴡɪʟʟ ᴜᴘʟᴏᴀᴅ 😬</b>", reply_markup=InlineKeyboardMarkup(btn), reply_to_message_id=int(msg_id))
         else:
             await query.answer(script.ALRT_TXT, show_alert=True)
 
