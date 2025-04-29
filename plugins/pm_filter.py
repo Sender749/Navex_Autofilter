@@ -1505,12 +1505,16 @@ async def auto_filter(client, msg, spoll=False , pm_mode = False):
     if settings["link"]:
         btn = []
         for file_num, file in enumerate(files, start=1):
-            display_text = file.caption 
-            links += f"""<b>\n\n{file_num}. <a href=https://t.me/{temp.U_NAME}?start=file_{query.message.chat.id}_{file.file_id}>[{get_size(file.file_size)}] {' '.join(filter(lambda x: not x.startswith('[') and not x.startswith('@') and not x.startswith('www.'), display_text.split()))}</a></b>"""
+            display_text = file.caption if file.caption else file.file_name  # Fallback to filename if no caption
+            links += f"""<b>\n\n{file_num}. <a href=https://t.me/{temp.U_NAME}?start={"pm_mode_" if pm_mode else ''}file_{ADMINS[0] if pm_mode else message.chat.id}_{file.file_id}>[{get_size(file.file_size)}] {display_text}</a></b>"""
     else:
-        btn = [[InlineKeyboardButton(text=f"🔗 {get_size(file.file_size)}≽ {formate_file_name(file.file_name)}", url=f'https://telegram.dog/{temp.U_NAME}?start=file_{message.chat.id}_{file.file_id}'),]
-               for file in files
-              ]
+        btn = [
+            [InlineKeyboardButton(
+                text=f"🔗 {get_size(file.file_size)} ≽ {file.caption if file.caption else file.file_name}",  # Show caption first
+                url=f'https://telegram.dog/{temp.U_NAME}?start=file_{message.chat.id}_{file.file_id}'
+            )]
+            for file in files
+        ]
     if offset != "":
         if total_results >= MAX_BTN:
             btn.insert(0,[
