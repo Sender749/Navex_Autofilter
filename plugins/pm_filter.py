@@ -179,7 +179,7 @@ async def next_page(bot, query):
     if settings["link"]:
         btn = []
         for file_num, file in enumerate(files, start=offset+1):
-            display_text = file.caption or file.file_name
+            display_text = file.caption 
             links += f"""<b>\n\n{file_num}. <a href=https://t.me/{temp.U_NAME}?start=file_{query.message.chat.id}_{file.file_id}>[{get_size(file.file_size)}] {' '.join(filter(lambda x: not x.startswith('[') and not x.startswith('@') and not x.startswith('www.'), display_text.split()))}</a></b>"""
     else:
         btn = [[InlineKeyboardButton(text=f"📁 {get_size(file.file_size)}≽ {formate_file_name(file.caption if file.caption else file.file_name)}", url=f'https://telegram.dog/{temp.U_NAME}?start=file_{query.message.chat.id}_{file.file_id}'),]
@@ -312,7 +312,7 @@ async def season_search(client: Client, query: CallbackQuery):
     if settings["link"]:
         btn = []
         for file_num, file in enumerate(files, start=offset+1):
-            display_text = file.caption or file.file_name
+            display_text = file.caption 
             links += f"""<b>\n\n{file_num}. <a href=https://t.me/{temp.U_NAME}?start=file_{query.message.chat.id}_{file.file_id}>[{get_size(file.file_size)}] {' '.join(filter(lambda x: not x.startswith('[') and not x.startswith('@') and not x.startswith('www.'), display_text.split()))}</a></b>"""
     else:
         btn = [[InlineKeyboardButton(text=f"📁 {get_size(file.file_size)}≽ {formate_file_name(file.caption if file.caption else file.file_name)}", url=f'https://telegram.dog/{temp.U_NAME}?start=file_{query.message.chat.id}_{file.file_id}'),]
@@ -418,7 +418,7 @@ async def year_search(client: Client, query: CallbackQuery):
     if settings["link"]:
         btn = []
         for file_num, file in enumerate(files, start=offset+1):
-            display_text = file.caption or file.file_name
+            display_text = file.caption #or file.file_name
             links += f"""<b>\n\n{file_num}. <a href=https://t.me/{temp.U_NAME}?start=file_{query.message.chat.id}_{file.file_id}>[{get_size(file.file_size)}] {' '.join(filter(lambda x: not x.startswith('[') and not x.startswith('@') and not x.startswith('www.'), display_text.split()))}</a></b>"""
     else:
         btn = [[InlineKeyboardButton(text=f"📁 {get_size(file.file_size)}≽ {formate_file_name(file.caption if file.caption else file.file_name)}", url=f'https://telegram.dog/{temp.U_NAME}?start=file_{query.message.chat.id}_{file.file_id}'),]
@@ -523,7 +523,7 @@ async def quality_search(client: Client, query: CallbackQuery):
     if settings["link"]:
         btn = []
         for file_num, file in enumerate(files, start=offset+1):
-            display_text = file.caption or file.file_name
+            display_text = file.caption #or file.file_name
             links += f"""<b>\n\n{file_num}. <a href=https://t.me/{temp.U_NAME}?start=file_{query.message.chat.id}_{file.file_id}>[{get_size(file.file_size)}] {' '.join(filter(lambda x: not x.startswith('[') and not x.startswith('@') and not x.startswith('www.'), display_text.split()))}</a></b>"""
     else:
         btn = [[InlineKeyboardButton(text=f"📁 {get_size(file.file_size)}≽ {formate_file_name(file.caption if file.caption else file.file_name)}", url=f'https://telegram.dog/{temp.U_NAME}?start=file_{query.message.chat.id}_{file.file_id}'),]
@@ -633,7 +633,7 @@ async def lang_search(client: Client, query: CallbackQuery):
     if settings["link"]:
         btn = []
         for file_num, file in enumerate(files, start=offset+1):
-            display_text = file.caption or file.file_name
+            display_text = file.caption #or file.file_name
             links += f"""<b>\n\n{file_num}. <a href=https://t.me/{temp.U_NAME}?start=file_{query.message.chat.id}_{file.file_id}>[{get_size(file.file_size)}] {' '.join(filter(lambda x: not x.startswith('[') and not x.startswith('@') and not x.startswith('www.'), display_text.split()))}</a></b>"""
     else:
         btn = [[InlineKeyboardButton(text=f"📁 {get_size(file.file_size)}≽ {formate_file_name(file.caption if file.caption else file.file_name)}", url=f'https://telegram.dog/{temp.U_NAME}?start=file_{query.message.chat.id}_{file.file_id}'),]
