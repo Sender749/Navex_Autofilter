@@ -1473,7 +1473,7 @@ async def auto_filter(client, msg, spoll=False , pm_mode = False):
         search = message.text
         chat_id = message.chat.id
         settings = await get_settings(chat_id , pm_mode=pm_mode)
-        searching_msg = await msg.reply_text(f'🔎 sᴇᴀʀᴄʜɪɴɢ {search}')
+        searching_msg = await msg.reply_text(f'🕵️ sᴇᴀʀᴄʜɪɴɢ {search}')
         files, offset, total_results = await get_search_results(search)
         await searching_msg.delete()
         if not files:
@@ -1614,10 +1614,6 @@ async def auto_filter(client, msg, spoll=False , pm_mode = False):
               #  await delSticker(st)
                 await asyncio.sleep(DELETE_TIME)
                 await k.delete()
-                try:
-                    await message.delete()
-                except:
-                    pass
             else:
                 await message.reply_photo(photo=imdb.get('poster'), caption=cap[:1024] + links + js_ads, reply_markup=InlineKeyboardMarkup(btn))                    
         except (MediaEmpty, PhotoInvalidDimensions, WebpageMediaEmpty):
@@ -1628,10 +1624,6 @@ async def auto_filter(client, msg, spoll=False , pm_mode = False):
                 #await delSticker(st)
                 await asyncio.sleep(DELETE_TIME)
                 await k.delete()
-                try:
-                    await message.delete()
-                except:
-                    pass
             else:
                 await message.reply_photo(photo=poster, caption=cap[:1024] + links + js_ads, parse_mode=enums.ParseMode.HTML, reply_markup=InlineKeyboardMarkup(btn))
         except Exception as e:
@@ -1644,10 +1636,6 @@ async def auto_filter(client, msg, spoll=False , pm_mode = False):
                     print("error", e)
                 await asyncio.sleep(DELETE_TIME)
                 await k.delete()
-                try:
-                    await message.delete()
-                except:
-                    pass
             else:
                 await message.reply_text(cap + links + js_ads, parse_mode=enums.ParseMode.HTML, reply_markup=InlineKeyboardMarkup(btn), disable_web_page_preview=True)
     else:
@@ -1657,10 +1645,7 @@ async def auto_filter(client, msg, spoll=False , pm_mode = False):
           #  await delSticker(st)
             await asyncio.sleep(DELETE_TIME)
             await k.delete()
-            try:
-                await message.delete()
-            except:
-                pass
+            
     return            
 
 async def advantage_spell_chok(message):
