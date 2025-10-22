@@ -113,7 +113,7 @@ if 'DYNO' in environ:
     ON_HEROKU = True
 else:
     ON_HEROKU = False
-URL = environ.get("FQDN", "https://nosy-dorothy-filetokensender-735e1c5b.koyeb.app/")
+URL = environ.get("FQDN", "https://precious-mab-filetokensender-fdc78bed.koyeb.app/")
 
 #---------------------------------------------------------------
 #---------------------------------------------------------------
